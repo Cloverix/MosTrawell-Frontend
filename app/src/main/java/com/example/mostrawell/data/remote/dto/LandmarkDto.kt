@@ -1,4 +1,4 @@
-package com.example.mostrawell.ui.dto
+package com.example.mostrawell.data.remote.dto
 
 import com.example.mostrawell.domain.entity.InterestTag
 

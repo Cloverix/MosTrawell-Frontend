@@ -1,4 +1,4 @@
-package com.example.mostrawell.ui.dto
+package com.example.mostrawell.data.remote.dto
 
 data class UserRegisterDto(
     val login: String,
