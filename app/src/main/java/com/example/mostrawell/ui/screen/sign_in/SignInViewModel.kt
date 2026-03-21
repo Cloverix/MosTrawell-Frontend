@@ -1,17 +1,14 @@
-package com.example.mostrawell.ui.screen.register
+package com.example.mostrawell.ui.screen.sign_in
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import kotlin.math.log
 
-class RegisterViewModel: ViewModel() {
+class SignInViewModel: ViewModel() {
     var login by mutableStateOf("")
         private set
     var password by mutableStateOf("")      //Needs to be encoded instantly after user input
-        private set
-    var duplicatePassword by mutableStateOf("")
         private set
 
     fun onLoginChange(newLogin: String) {
@@ -22,24 +19,15 @@ class RegisterViewModel: ViewModel() {
         password = newPassword
     }
 
-    fun onDuplicatePasswordChange(newDuplicatePassword: String) {
-        duplicatePassword = newDuplicatePassword
-    }
-
-    fun validatePassword(): Boolean {
-        //TODO: add validation and check that password and duplicatePassword are the same
-        return true
-    }
-
     fun onDoneButtonClick() {
         //TODO: POST login and password to DB
     }
 
-    fun onSignInButtonClick() {
-        //navigate to Sign in screen
+    fun onSignUpButtonClick() {
+        //navigate to Register screen
     }
 
     fun isDoneButtonEnabled(): Boolean {
-        return login.isNotBlank() && validatePassword()
+        return login.isNotBlank() && password.isNotBlank()
     }
 }

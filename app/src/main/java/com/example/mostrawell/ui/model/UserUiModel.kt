@@ -1,8 +1,8 @@
-package com.example.mostrawell.data.remote.dto
+package com.example.mostrawell.ui.model
 
 import com.example.mostrawell.domain.entity.tag.Tag
 
-data class UserDto(
+class UserUiModel (
     val name: String,
     val age: Int,
     val avatarUrl: String?,

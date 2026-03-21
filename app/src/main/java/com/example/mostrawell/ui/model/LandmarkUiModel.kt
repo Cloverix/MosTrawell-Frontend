@@ -1,8 +1,8 @@
-package com.example.mostrawell.data.remote.dto
+package com.example.mostrawell.ui.model
 
 import com.example.mostrawell.domain.entity.tag.Tag
 
-data class LandmarkDto(
+class LandmarkUiModel (
     val name: String,
     val address: String,
     val desc: String,

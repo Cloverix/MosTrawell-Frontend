@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+
+    kotlin("plugin.serialization") version "2.0.21"
 }
 
 android {
@@ -58,5 +60,9 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$version")
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation("androidx.navigation:navigation-compose:2.8.9")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
+    implementation("io.coil-kt:coil-compose:2.4.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9")
 }
