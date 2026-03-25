@@ -7,12 +7,25 @@ import androidx.lifecycle.ViewModel
 import kotlin.math.log
 
 class RegisterViewModel: ViewModel() {
+    var nickname by mutableStateOf("")
+        private set
+    var age by mutableStateOf(0)
+        private set
+
     var login by mutableStateOf("")
         private set
     var password by mutableStateOf("")      //Needs to be encoded instantly after user input
         private set
     var duplicatePassword by mutableStateOf("")
         private set
+
+    fun onNicknameChange(newNickname: String) {
+        nickname = newNickname
+    }
+
+    fun onAgeChange(newAge: Int) {
+        age = newAge
+    }
 
     fun onLoginChange(newLogin: String) {
         login = newLogin

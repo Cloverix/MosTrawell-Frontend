@@ -1,4 +1,4 @@
 package com.example.mostrawell.domain.entity.tag
 
-interface Tag {
+sealed interface Tag {
 }
