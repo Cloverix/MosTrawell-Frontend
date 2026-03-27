@@ -4,6 +4,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import com.example.mostrawell.ui.navigation.Route
 
 class SignInViewModel: ViewModel() {
     var login by mutableStateOf("")
@@ -20,11 +23,11 @@ class SignInViewModel: ViewModel() {
     }
 
     fun onDoneButtonClick() {
-        //TODO: POST login and password to DB
+        //TODO: validate user
     }
 
-    fun onSignUpButtonClick() {
-        //navigate to Register screen
+    fun onSignUpButtonClick(navController: NavHostController) {
+        navController.navigate(Route.Register.route)
     }
 
     fun isDoneButtonEnabled(): Boolean {

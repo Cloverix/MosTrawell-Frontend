@@ -32,12 +32,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.mostrawell.R
 import com.example.mostrawell.ui.component.GradientMainScreen
 
 @Composable
-fun RegisterScreen(modifier: Modifier, model: RegisterViewModel = viewModel()) {
-    //TODO: Add navHostController & navigation
+fun RegisterScreen(
+        navController: NavHostController,
+        modifier: Modifier = Modifier,
+        model: RegisterViewModel = viewModel()
+    ) {
     GradientMainScreen(
         gradientColor1 = colorResource(R.color.main_color),
         gradientColor2 = colorResource(R.color.white)
@@ -65,7 +70,7 @@ fun RegisterScreen(modifier: Modifier, model: RegisterViewModel = viewModel()) {
                         onValueChange = { newName -> model.onNicknameChange(newName) },
                         label = { Text(text = "Nickname") }
                     )
-                    //TODO: add ExposedDropdownMenuBox & shrink nickname TextField
+                    //TODO: add ExposedDropdownMenuBox for age & shrink nickname TextField
                 }
                 OutlinedTextField(
                     value = model.login,
@@ -85,7 +90,7 @@ fun RegisterScreen(modifier: Modifier, model: RegisterViewModel = viewModel()) {
                     label = { Text(text = "Repeat password") }
                 )
                 Button(
-                    onClick = { model.onDoneButtonClick() },
+                    onClick = { model.onDoneButtonClick(navController) },
                     colors = ButtonColors(
                         containerColor = colorResource(R.color.main_color),
                         contentColor = colorResource(R.color.black),
@@ -120,7 +125,7 @@ fun RegisterScreen(modifier: Modifier, model: RegisterViewModel = viewModel()) {
                     fontWeight = FontWeight.SemiBold
                 )
                 OutlinedButton(
-                    onClick = { model.onSignInButtonClick() },
+                    onClick = { model.onSignInButtonClick(navController) },
                     colors = ButtonColors(
                         containerColor = Color(0, 0, 0, 0),
                         contentColor = colorResource(R.color.black),
@@ -144,5 +149,5 @@ fun RegisterScreen(modifier: Modifier, model: RegisterViewModel = viewModel()) {
 @Preview(showSystemUi = true)
 @Composable
 fun Preview() {
-    RegisterScreen(Modifier)
+    RegisterScreen(rememberNavController(), model = viewModel())
 }

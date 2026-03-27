@@ -1,10 +1,9 @@
 package com.example.mostrawell.data.remote.dto
 
-import com.example.mostrawell.domain.entity.tag.Tag
-
 data class UserDto(
+    val id: Long,
     val name: String,
     val age: Int,
     val avatarUrl: String?,
-    val tagList: List<Tag>
+    val tags: List<String>
 )

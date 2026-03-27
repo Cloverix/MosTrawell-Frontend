@@ -32,11 +32,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.mostrawell.R
 import com.example.mostrawell.ui.component.GradientMainScreen
 
 @Composable
-fun SignInScreen(modifier: Modifier, model: SignInViewModel = viewModel()) {
+fun SignInScreen(
+        navController: NavHostController,
+        modifier: Modifier = Modifier,
+        model: SignInViewModel = viewModel()
+    ) {
     GradientMainScreen(
         gradientColor1 = colorResource(R.color.main_color),
         gradientColor2 = colorResource(R.color.white)
@@ -107,7 +113,7 @@ fun SignInScreen(modifier: Modifier, model: SignInViewModel = viewModel()) {
                     fontWeight = FontWeight.SemiBold
                 )
                 OutlinedButton(
-                    onClick = { model.onSignUpButtonClick() },
+                    onClick = { model.onSignUpButtonClick(navController) },
                     colors = ButtonColors(
                         containerColor = Color(0, 0, 0, 0),
                         contentColor = colorResource(R.color.black),
@@ -130,5 +136,5 @@ fun SignInScreen(modifier: Modifier, model: SignInViewModel = viewModel()) {
 @Preview(showSystemUi = true)
 @Composable
 fun Preview() {
-    SignInScreen(Modifier, viewModel())
+    SignInScreen(rememberNavController(), model = viewModel())
 }

@@ -4,6 +4,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import com.example.mostrawell.ui.navigation.Route
 import kotlin.math.log
 
 class RegisterViewModel: ViewModel() {
@@ -44,12 +47,13 @@ class RegisterViewModel: ViewModel() {
         return true
     }
 
-    fun onDoneButtonClick() {
+    fun onDoneButtonClick(navController: NavHostController) {
         //TODO: POST login and password to DB
+        navController.navigate(Route.InterestSelection.route)
     }
 
-    fun onSignInButtonClick() {
-        //navigate to Sign in screen
+    fun onSignInButtonClick(navController: NavHostController) {
+        navController.navigate(Route.SignIn.route)
     }
 
     fun isDoneButtonEnabled(): Boolean {

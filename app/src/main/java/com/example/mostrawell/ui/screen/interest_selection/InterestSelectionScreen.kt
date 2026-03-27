@@ -1,6 +1,5 @@
-package com.example.mostrawell.ui.screen.interest_choice
+package com.example.mostrawell.ui.screen.interest_selection
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
@@ -28,13 +27,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.mostrawell.R
 import com.example.mostrawell.domain.entity.tag.EntertainmentTag
 import com.example.mostrawell.domain.entity.tag.LocationTag
 import com.example.mostrawell.ui.component.SimpleScaffold
 
 @Composable
-fun InterestChoiceScreen(modifier: Modifier, model: InterestChoiceViewModel = viewModel()) {
+fun InterestSelectionScreen(
+        navController: NavHostController,
+        modifier: Modifier = Modifier,
+        model: InterestSelectionViewModel = viewModel()
+    ) {
     SimpleScaffold{ paddingValues ->
         Column(
             modifier = Modifier
@@ -69,17 +74,17 @@ fun InterestChoiceScreen(modifier: Modifier, model: InterestChoiceViewModel = vi
             ) {
                 EntertainmentTag.entries.forEach { tag ->
                     FilterChip(
-                        selected = model.isTagChosen(tag),
+                        selected = model.isTagSelected(tag),
                         onClick = {
-                            if (model.isTagChosen(tag)) model.removeChosenTag(tag)
-                            else model.addChosenTag(tag)
+                            if (model.isTagSelected(tag)) model.removeSelectedTag(tag)
+                            else model.addSelectedTag(tag)
                         },
                         label = {
                             Text(
                                 text = tag.name
                                     .replace("_", " ")
                                     .lowercase()
-                                    .replaceFirstChar{ it.uppercase() }
+                                    .replaceFirstChar { it.uppercase() }
                             )
                         },
                         colors = FilterChipDefaults.filterChipColors(
@@ -112,17 +117,17 @@ fun InterestChoiceScreen(modifier: Modifier, model: InterestChoiceViewModel = vi
             ) {
                 LocationTag.entries.forEach { tag ->
                     FilterChip(
-                        selected = model.isTagChosen(tag),
+                        selected = model.isTagSelected(tag),
                         onClick = {
-                            if (model.isTagChosen(tag)) model.removeChosenTag(tag)
-                            else model.addChosenTag(tag)
+                            if (model.isTagSelected(tag)) model.removeSelectedTag(tag)
+                            else model.addSelectedTag(tag)
                         },
                         label = {
                             Text(
                                 text = tag.name
                                     .replace("_", " ")
                                     .lowercase()
-                                    .replaceFirstChar{ it.uppercase() }
+                                    .replaceFirstChar { it.uppercase() }
                             )
                         },
                         colors = FilterChipDefaults.filterChipColors(
@@ -158,5 +163,5 @@ fun InterestChoiceScreen(modifier: Modifier, model: InterestChoiceViewModel = vi
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun Preview() {
-    InterestChoiceScreen(Modifier)
+    InterestSelectionScreen(rememberNavController(), model = viewModel())
 }
