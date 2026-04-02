@@ -15,6 +15,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -64,13 +65,13 @@ fun SignInScreen(
                     modifier = Modifier
                 )
                 Spacer(Modifier.height(40.dp))
-                TextField(
+                OutlinedTextField(
                     value = model.login,
                     onValueChange = { newLogin -> model.onLoginChange(newLogin) },
                     label = { Text(text = "Login") },
                     modifier = Modifier
                 )
-                TextField(
+                OutlinedTextField(
                     value = model.password,
                     onValueChange = { newPassword -> model.onPasswordChange(newPassword) },
                     visualTransformation = PasswordVisualTransformation(),

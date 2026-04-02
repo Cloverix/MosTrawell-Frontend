@@ -6,7 +6,7 @@ import com.example.mostrawell.domain.entity.tag.Tag
 
 class InterestSelectionViewModel: ViewModel() {
     val selectedTags = mutableStateListOf<Tag>()
-    //TODO: Load user here?
+    //TODO: Load user here
 
     fun addSelectedTag(tag: Tag) {
         selectedTags.add(tag)
