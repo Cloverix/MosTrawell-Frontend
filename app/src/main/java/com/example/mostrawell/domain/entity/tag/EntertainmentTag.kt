@@ -18,5 +18,12 @@ enum class EntertainmentTag: Tag {
     SINGING,
     HANDIWORK,
     CHATTING,
-    SHOPPING
+    SHOPPING;
+
+    override fun getName(): String {
+        return name
+            .replace("_", " ")
+            .lowercase()
+            .replaceFirstChar { it.uppercase() }
+    }
 }

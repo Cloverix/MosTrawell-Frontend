@@ -20,7 +20,7 @@ fun SimpleScaffold(modifier: Modifier = Modifier, content: @Composable (PaddingV
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(35.dp)
-                    .background(colorResource(R.color.main_color))
+                    .background(colorResource(R.color.main_color_lowered_contrast))
             )
         },
         bottomBar = {
@@ -28,7 +28,7 @@ fun SimpleScaffold(modifier: Modifier = Modifier, content: @Composable (PaddingV
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(35.dp)
-                    .background(colorResource(R.color.main_color))
+                    .background(colorResource(R.color.main_color_lowered_contrast))
             )
         }
     ) { paddingValues ->

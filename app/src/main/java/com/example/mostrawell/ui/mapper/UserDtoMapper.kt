@@ -9,7 +9,7 @@ object UserDtoMapper {
     fun mapDto(dto: UserDto): UserUiModel {
         return UserUiModel(
             name = dto.name,
-            age = dto.age,
+            age = dto.age.toString(),
             avatarUrl = dto.avatarUrl,
             tags = dto.tags.map { tagName ->
                 val tag: Tag? = findTagByName(tagName)
@@ -23,7 +23,7 @@ object UserDtoMapper {
         return UserDto(
             id = userId,
             name = uiModel.name,
-            age = uiModel.age,
+            age = uiModel.age.toInt(),
             avatarUrl = uiModel.avatarUrl,
             tags = uiModel.tags.map { it.toString() }
         )

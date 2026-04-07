@@ -4,6 +4,7 @@ sealed class Route(val route: String) {
     object Register: Route("register")
     object SignIn: Route("sign_in")
     object InterestSelection: Route("interest_selection")
+    object RecommendationFeedScreen: Route("recommendation_feed")
 
     //Example for a route with arguments:
     /*

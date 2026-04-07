@@ -10,5 +10,12 @@ enum class LocationTag: Tag {
     RESTAURANT,
     CAFE,
     CLUB,
-    FAIR
+    FAIR;
+
+    override fun getName(): String {
+        return name
+            .replace("_", " ")
+            .lowercase()
+            .replaceFirstChar { it.uppercase() }
+    }
 }
