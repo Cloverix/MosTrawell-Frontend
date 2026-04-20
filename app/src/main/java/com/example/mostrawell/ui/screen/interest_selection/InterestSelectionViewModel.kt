@@ -1,12 +1,17 @@
 package com.example.mostrawell.ui.screen.interest_selection
 
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.example.mostrawell.domain.entity.tag.EntertainmentTag
 import com.example.mostrawell.domain.entity.tag.Tag
+import com.example.mostrawell.ui.model.UserUiModel
 
-class InterestSelectionViewModel: ViewModel() {
-    val selectedTags = mutableStateListOf<Tag>()
-    //TODO: Load user here
+class InterestSelectionViewModel(user: UserUiModel?): ViewModel() {
+    var user by mutableStateOf<UserUiModel?>(user)
+    val selectedTags = mutableStateListOf<Tag>(*user?.tags?.toTypedArray() ?: emptyList<Tag>().toTypedArray())
 
     fun addSelectedTag(tag: Tag) {
         selectedTags.add(tag)

@@ -1,8 +1,11 @@
 package com.example.mostrawell.ui.screen.profile
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -31,10 +35,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SelectableChipColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -43,19 +49,24 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.mostrawell.R
 import com.example.mostrawell.domain.util.findTagByName
 
 @Composable
-@Preview(showSystemUi = true)
 fun ProfileScreen(
+    navController: NavHostController,
     modifier: Modifier = Modifier,
     model: ProfileViewModel = viewModel()
 ) {
@@ -72,7 +83,6 @@ fun ProfileScreen(
         }
         else {
             val user = model.user!!
-            var isEditModeActivated by rememberSaveable { mutableStateOf(false) }
             Scaffold(
                 bottomBar = {
                     Row(
@@ -85,9 +95,8 @@ fun ProfileScreen(
                             contentAlignment = Alignment.Center,
                             modifier = Modifier
                                 .wrapContentSize()
-                                //.clip(CircleShape)
                                 .background(colorResource(R.color.main_color_lowered_contrast))
-                                .clickable { /*TODO: navigate to tag editing screen*/ }
+                                .clickable { model.onEditTagsButtonClick(navController) }
                         ) {
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally
@@ -105,9 +114,8 @@ fun ProfileScreen(
                             contentAlignment = Alignment.Center,
                             modifier = Modifier
                                 .wrapContentSize()
-                                //.clip(CircleShape)
                                 .background(colorResource(R.color.main_color_lowered_contrast))
-                                .clickable { isEditModeActivated = !isEditModeActivated }
+                                .clickable { model.onEditProfileButtonClick(navController) }
                         ) {
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally
@@ -138,28 +146,18 @@ fun ProfileScreen(
                         placeholder = painterResource(R.drawable.placeholder_background),
                         fallback = painterResource(R.drawable.placeholder_background),
                         modifier = Modifier
-                            .scale(0.5f)
+                            .size(120.dp)
                             .clip(CircleShape)
                             .align(Alignment.CenterHorizontally)
+                            .clickable(
+                                onClick = { /*TODO:Photo selection logic via PhotoPicker*/ }
+                            )
                     )
-                    OutlinedTextField(
-                        value = user.name,
-                        onValueChange = { /*TODO: add logic*/ },
-                        readOnly = !isEditModeActivated,
-                        label = { Text(text = "username") },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 10.dp)
-                    )
-                    Spacer(Modifier.height(10.dp))
-                    OutlinedTextField(
-                        value = user.age,
-                        onValueChange = { /*TODO: add logic*/ },
-                        readOnly = !isEditModeActivated,
-                        label = { Text(text = "age") },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 10.dp)
+                    Spacer(Modifier.height(20.dp))
+                    Text(
+                        text = user.name,
+                        fontSize = 36.sp,
+                        fontWeight = FontWeight.SemiBold
                     )
                     Spacer(Modifier.height(20.dp))
                     HorizontalDivider(
@@ -170,6 +168,10 @@ fun ProfileScreen(
                             .padding(horizontal = 20.dp)
                     )
                     Spacer(Modifier.height(20.dp))
+                    Text(
+                        text = "Your interest tags:",
+                        fontSize = 16.sp
+                    )
                     FlowRow(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
@@ -186,4 +188,10 @@ fun ProfileScreen(
             }
         }
     }
+}
+
+@Preview(showSystemUi = true)
+@Composable
+fun Preview() {
+    ProfileScreen(rememberNavController())
 }

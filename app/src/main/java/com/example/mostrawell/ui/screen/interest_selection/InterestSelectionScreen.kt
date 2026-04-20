@@ -17,6 +17,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -33,13 +34,19 @@ import com.example.mostrawell.R
 import com.example.mostrawell.domain.entity.tag.EntertainmentTag
 import com.example.mostrawell.domain.entity.tag.LocationTag
 import com.example.mostrawell.ui.component.SimpleScaffold
+import com.example.mostrawell.ui.model.UserUiModel
 
 @Composable
 fun InterestSelectionScreen(
-        navController: NavHostController,
-        modifier: Modifier = Modifier,
-        model: InterestSelectionViewModel = viewModel()
-    ) {
+    navController: NavHostController,
+    user: UserUiModel,
+    modifier: Modifier = Modifier
+) {
+    val factory = remember(user.id) { InterestSelectionViewModelFactory(user) }
+    val model: InterestSelectionViewModel = viewModel(
+        key = user.id.toString(),
+        factory = factory
+    )
     SimpleScaffold{ paddingValues ->
         Column(
             modifier = Modifier
@@ -163,5 +170,5 @@ fun InterestSelectionScreen(
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun Preview() {
-    InterestSelectionScreen(rememberNavController(), model = viewModel())
+    InterestSelectionScreen(rememberNavController(), user = UserUiModel(1, "Alex", "19", null, EntertainmentTag.entries.toList()))
 }

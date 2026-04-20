@@ -11,6 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.mostrawell.ui.navigation.Root
 import com.example.mostrawell.ui.navigation.Route
 import com.example.mostrawell.ui.screen.interest_selection.InterestSelectionScreen
+import com.example.mostrawell.ui.screen.profile.ProfileScreen
 import com.example.mostrawell.ui.screen.register.RegisterScreen
 import com.example.mostrawell.ui.screen.sign_in.SignInScreen
 import com.example.mostrawell.ui.theme.MosTrawellTheme

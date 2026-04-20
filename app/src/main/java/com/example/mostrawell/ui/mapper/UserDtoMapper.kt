@@ -8,6 +8,7 @@ import com.example.mostrawell.ui.model.UserUiModel
 object UserDtoMapper {
     fun mapDto(dto: UserDto): UserUiModel {
         return UserUiModel(
+            id = dto.id,
             name = dto.name,
             age = dto.age.toString(),
             avatarUrl = dto.avatarUrl,
@@ -19,9 +20,9 @@ object UserDtoMapper {
         )
     }
 
-    fun mapUiModel(uiModel: UserUiModel, userId: Long): UserDto {
+    fun mapUiModel(uiModel: UserUiModel): UserDto {
         return UserDto(
-            id = userId,
+            id = uiModel.id,
             name = uiModel.name,
             age = uiModel.age.toInt(),
             avatarUrl = uiModel.avatarUrl,
