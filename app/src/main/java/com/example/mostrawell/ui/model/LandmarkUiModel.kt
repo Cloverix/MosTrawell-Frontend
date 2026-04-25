@@ -3,6 +3,7 @@ package com.example.mostrawell.ui.model
 import com.example.mostrawell.domain.entity.tag.Tag
 
 class LandmarkUiModel (
+    val id: Long,
     val name: String,
     val address: String,
     val desc: String,

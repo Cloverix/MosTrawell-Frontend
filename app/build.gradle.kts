@@ -8,9 +8,12 @@ plugins {
 
 android {
     namespace = "com.example.mostrawell"
+    compileSdk = 36
+    /*
     compileSdk {
         version = release(36)
     }
+    */
 
     defaultConfig {
         applicationId = "com.example.mostrawell"
@@ -23,6 +26,9 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "BASE_URL", "\"https://localhost:8080/\"")
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -40,6 +46,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -62,7 +69,12 @@ dependencies {
 
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation("androidx.navigation:navigation-compose:2.8.9")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
     implementation("io.coil-kt:coil-compose:2.4.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9")
+    implementation("io.ktor:ktor-client-core:3.2.1")
+    implementation("io.ktor:ktor-client-android:3.2.1")
+    implementation("io.ktor:ktor-client-content-negotiation:3.2.1")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:3.2.1")
+    implementation("io.insert-koin:koin-android:4.2.1")
+    implementation("io.insert-koin:koin-androidx-compose:4.2.1")
 }

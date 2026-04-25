@@ -5,9 +5,10 @@ import com.example.mostrawell.domain.entity.tag.Tag
 import com.example.mostrawell.domain.util.findTagByName
 import com.example.mostrawell.ui.model.LandmarkUiModel
 
-object LandmarkDtoMapper {
+object LandmarkMapper {
     fun mapDto(dto: LandmarkDto): LandmarkUiModel {
         return LandmarkUiModel(
+            id = dto.id,
             name = dto.name,
             address = dto.address,
             desc = dto.desc,
@@ -18,9 +19,9 @@ object LandmarkDtoMapper {
             }
         )
     }
-
     fun mapUiModel(uiModel: LandmarkUiModel): LandmarkDto {
         return LandmarkDto(
+            id = uiModel.id,
             name = uiModel.name,
             address = uiModel.address,
             desc = uiModel.desc,

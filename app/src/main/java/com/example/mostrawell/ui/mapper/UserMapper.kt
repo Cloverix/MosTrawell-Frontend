@@ -5,7 +5,7 @@ import com.example.mostrawell.domain.entity.tag.Tag
 import com.example.mostrawell.domain.util.findTagByName
 import com.example.mostrawell.ui.model.UserUiModel
 
-object UserDtoMapper {
+object UserMapper {
     fun mapDto(dto: UserDto): UserUiModel {
         return UserUiModel(
             id = dto.id,
