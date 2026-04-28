@@ -10,11 +10,12 @@ import androidx.navigation.NavHost
 import androidx.navigation.NavHostController
 import com.example.mostrawell.domain.entity.tag.EntertainmentTag
 import com.example.mostrawell.domain.entity.tag.Tag
+import com.example.mostrawell.domain.util.ProfileDataManager
 import com.example.mostrawell.ui.model.UserUiModel
 
-class ProfileViewModel: ViewModel() {
-    //TODO: Данные в user только для тестов!
-    var user: UserUiModel? by mutableStateOf(UserUiModel(1, "Alex", "19", null, EntertainmentTag.entries.toList()))
+class ProfileViewModel(profileManager: ProfileDataManager): ViewModel() {
+    //TODO: переделать для работы с ProfileDataManager
+    var user: UserUiModel? by mutableStateOf(UserUiModel(1, "Alex", "19", null, EntertainmentTag.entries.toSet()))
         private set
     //TODO: Все, что ниже, можно убрать, если user непосредственно на экране ProfileScreen не изменяется
     var name: String by mutableStateOf("")

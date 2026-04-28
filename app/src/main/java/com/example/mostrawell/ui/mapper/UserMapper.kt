@@ -16,7 +16,7 @@ object UserMapper {
                 val tag: Tag? = findTagByName(tagName)
                 tag?:throw IllegalArgumentException("Tag does not exist")
                 tag
-            }
+            }.toSet()
         )
     }
 
@@ -26,7 +26,7 @@ object UserMapper {
             name = uiModel.name,
             age = uiModel.age.toInt(),
             avatarUrl = uiModel.avatarUrl,
-            tags = uiModel.tags.map { it.toString() }
+            tags = uiModel.tags.map { it.toString() }.toSet()
         )
     }
 }

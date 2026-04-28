@@ -8,5 +8,5 @@ data class UserDto(
     val name: String,
     val age: Int,
     val avatarUrl: String?,
-    val tags: List<String>
+    val tags: Set<String>
 )

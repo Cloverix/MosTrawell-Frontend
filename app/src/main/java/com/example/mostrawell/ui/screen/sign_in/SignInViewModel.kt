@@ -6,9 +6,10 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import com.example.mostrawell.domain.repository.UserRepository
 import com.example.mostrawell.ui.navigation.Route
 
-class SignInViewModel: ViewModel() {
+class SignInViewModel(private val userRepository: UserRepository): ViewModel() {
     var login by mutableStateOf("")
         private set
     var password by mutableStateOf("")      //Needs to be encoded instantly after user input
@@ -23,7 +24,7 @@ class SignInViewModel: ViewModel() {
     }
 
     fun onDoneButtonClick() {
-        //TODO: validate user
+        //TODO: validate user (check in repository)
     }
 
     fun onSignUpButtonClick(navController: NavHostController) {

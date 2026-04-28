@@ -35,12 +35,13 @@ import com.example.mostrawell.domain.entity.tag.EntertainmentTag
 import com.example.mostrawell.domain.entity.tag.LocationTag
 import com.example.mostrawell.ui.component.SimpleScaffold
 import com.example.mostrawell.ui.model.UserUiModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun InterestSelectionScreen(
+fun InterestSelectionScreen(    //TODO: переделать все под работу с DataStore и UserRepository
     navController: NavHostController,
-    user: UserUiModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    model: InterestSelectionViewModel = koinViewModel()
 ) {
     val factory = remember(user.id) { InterestSelectionViewModelFactory(user) }
     val model: InterestSelectionViewModel = viewModel(

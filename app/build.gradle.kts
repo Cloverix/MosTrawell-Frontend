@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 
-    kotlin("plugin.serialization") version "2.0.21"
+    kotlin("plugin.serialization") version "2.3.0"
 }
 
 android {
@@ -37,17 +37,29 @@ android {
             )
         }
     }
+    /*
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
     }
+
+    tasks.withType<JavaCompile>().configureEach {
+        options.release.set(17)
+    }
+
+     */
+
     buildFeatures {
         compose = true
         buildConfig = true
     }
+}
+
+kotlin {
+    jvmToolchain(17)
 }
 
 dependencies {
@@ -70,11 +82,13 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation("androidx.navigation:navigation-compose:2.8.9")
     implementation("io.coil-kt:coil-compose:2.4.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9")
-    implementation("io.ktor:ktor-client-core:3.2.1")
-    implementation("io.ktor:ktor-client-android:3.2.1")
-    implementation("io.ktor:ktor-client-content-negotiation:3.2.1")
-    implementation("io.ktor:ktor-serialization-kotlinx-json:3.2.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
+    implementation("io.ktor:ktor-client-core:3.3.0")
+    implementation("io.ktor:ktor-client-android:3.3.0")
+    implementation("io.ktor:ktor-client-content-negotiation:3.3.0")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:3.3.0")
     implementation("io.insert-koin:koin-android:4.2.1")
     implementation("io.insert-koin:koin-androidx-compose:4.2.1")
+    implementation("io.insert-koin:koin-core:4.2.1")
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
 }

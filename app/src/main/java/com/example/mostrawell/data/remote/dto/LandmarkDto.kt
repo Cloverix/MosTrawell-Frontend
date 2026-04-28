@@ -8,5 +8,5 @@ data class LandmarkDto(
     val name: String,
     val address: String,
     val desc: String,
-    val tags: List<String>
+    val tags: Set<String>
 )

@@ -2,10 +2,12 @@ package com.example.mostrawell.ui.screen.recomendation_feed
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun RecommendationFeedScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    model: RecommendationFeedViewModel = koinViewModel()
 ) {
 
 }

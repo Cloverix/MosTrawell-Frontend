@@ -7,5 +7,5 @@ class LandmarkUiModel (
     val name: String,
     val address: String,
     val desc: String,
-    val tags: List<Tag>
+    val tags: Set<Tag>
 )

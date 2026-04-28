@@ -37,12 +37,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.mostrawell.R
 import com.example.mostrawell.ui.component.GradientMainScreen
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SignInScreen(
         navController: NavHostController,
         modifier: Modifier = Modifier,
-        model: SignInViewModel = viewModel()
+        model: SignInViewModel = koinViewModel()
     ) {
     GradientMainScreen(
         gradientColor1 = colorResource(R.color.main_color),

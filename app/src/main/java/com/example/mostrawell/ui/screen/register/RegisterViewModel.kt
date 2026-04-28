@@ -7,11 +7,12 @@ import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.mostrawell.data.remote.dto.UserRegisterDto
+import com.example.mostrawell.domain.repository.UserRepository
 import com.example.mostrawell.ui.model.UserUiModel
 import com.example.mostrawell.ui.navigation.Route
 import kotlin.math.log
 
-class RegisterViewModel: ViewModel() {
+class RegisterViewModel(private val userRepository: UserRepository): ViewModel() {
     var nickname by mutableStateOf("")
         private set
     var age by mutableStateOf("")
@@ -32,19 +33,6 @@ class RegisterViewModel: ViewModel() {
         age = newAge
     }
 
-    fun validateAge(age: String): String? {       //Return age as a string if valid, else return null
-        try {
-            val ageNum = age.toInt()
-            if (ageNum in 12..100) {        //Неясная причина отказа, если возраст выходит за допустимые рамки
-                return age
-            }
-            return null
-        }
-        catch (e: NumberFormatException) {
-            return null
-        }
-    }
-
     fun onLoginChange(newLogin: String) {
         login = newLogin
     }
@@ -63,7 +51,7 @@ class RegisterViewModel: ViewModel() {
     }
 
     fun onDoneButtonClick(navController: NavHostController) {
-        //TODO: POST login and password to DB
+        //TODO: POST login and password to DB and save it inside userDataStore
         // or return "User with such login and password already exists" exception
         navController.navigate(Route.InterestSelection.route)
     }

@@ -7,5 +7,5 @@ class UserUiModel (
     val name: String,
     val age: String,
     val avatarUrl: String?,
-    val tags: List<Tag>
+    val tags: Set<Tag>
 )

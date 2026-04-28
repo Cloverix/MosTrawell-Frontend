@@ -7,9 +7,12 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.mostrawell.domain.entity.tag.EntertainmentTag
 import com.example.mostrawell.domain.entity.tag.Tag
+import com.example.mostrawell.domain.repository.UserRepository
+import com.example.mostrawell.domain.util.ProfileDataManager
 import com.example.mostrawell.ui.model.UserUiModel
 
-class InterestSelectionViewModel(user: UserUiModel?): ViewModel() {
+class InterestSelectionViewModel(profileManager: ProfileDataManager, userRepository: UserRepository): ViewModel() {
+    //TODO: переделать под работу с ProfileDataManager и UserRepo
     var user by mutableStateOf<UserUiModel?>(user)
     val selectedTags = mutableStateListOf<Tag>(*user?.tags?.toTypedArray() ?: emptyList<Tag>().toTypedArray())
 

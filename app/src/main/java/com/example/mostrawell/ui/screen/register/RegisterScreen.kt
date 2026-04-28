@@ -53,8 +53,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.mostrawell.R
+import com.example.mostrawell.domain.util.validateAge
 import com.example.mostrawell.ui.component.GradientMainScreen
 import kotlinx.serialization.descriptors.PrimitiveKind
+import org.koin.androidx.compose.koinViewModel
 import kotlin.time.Duration
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -62,7 +64,7 @@ import kotlin.time.Duration
 fun RegisterScreen(
         navController: NavHostController,
         modifier: Modifier = Modifier,
-        model: RegisterViewModel = viewModel()
+        model: RegisterViewModel = koinViewModel()
     ) {
     val context = LocalContext.current
 
@@ -108,7 +110,7 @@ fun RegisterScreen(
                         modifier = Modifier
                             .onFocusChanged { focusState ->
                                 if (!focusState.isFocused && model.age.isNotBlank()) {
-                                    val validatedAge: String? = model.validateAge(model.age)
+                                    val validatedAge: String? = validateAge(model.age)
                                     if (validatedAge == null) {
                                         Toast.makeText(
                                             context,
