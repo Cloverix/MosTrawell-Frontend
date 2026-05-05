@@ -8,18 +8,41 @@ import com.example.mostrawell.ui.mapper.UserMapper
 import com.example.mostrawell.ui.model.UserUiModel
 import io.ktor.client.plugins.ClientRequestException
 import kotlinx.coroutines.CancellationException
+import kotlin.math.log
 
 class UserRepositoryImpl(private val userService: UserApiService): UserRepository {
+    override suspend fun getById(id: Long): Resource<UserUiModel> {
+        return try {
+            val responseDto = userService.getById(id)
+            Resource.Success(UserMapper.mapDto(responseDto))
+        } catch (e: ClientRequestException) {
+            Resource.Failure("Error ${e.response.status.value}: ${e.response.status.description}")
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Failure("Unexpected error: ${e.message}")
+        }
+    }
+
+    override suspend fun getByLogin(login: String): Resource<UserUiModel> {
+        return try {
+            val responseDto = userService.getByLogin(login)
+            Resource.Success(UserMapper.mapDto(responseDto))
+        } catch (e: ClientRequestException) {
+            Resource.Failure("Error ${e.response.status.value}: ${e.response.status.description}")
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Resource.Failure("Unexpected error: ${e.message}")
+        }
+    }
+
     override suspend fun login(
         login: String,
         password: String
     ): Resource<UserUiModel> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun getById(id: Long): Resource<UserUiModel> {
         return try {
-            val responseDto = userService.getById(id)
+            val responseDto = userService.login(login, password)
             Resource.Success(UserMapper.mapDto(responseDto))
         } catch (e: ClientRequestException) {
             Resource.Failure("Error ${e.response.status.value}: ${e.response.status.description}")
@@ -61,7 +84,7 @@ class UserRepositoryImpl(private val userService: UserApiService): UserRepositor
 
     override suspend fun changeTags(
         id: Long,
-        tags: List<String>
+        tags: Set<String>
     ): Resource<UserUiModel> {
         return try {
             val responseDto = userService.changeTags(id, tags)

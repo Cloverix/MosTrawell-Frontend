@@ -57,12 +57,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.mostrawell.R
 import com.example.mostrawell.domain.util.findTagByName
+import com.example.mostrawell.ui.model.UserUiModel
+import com.example.mostrawell.ui.navigation.Route
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun ProfileScreen(
@@ -70,11 +74,13 @@ fun ProfileScreen(
     modifier: Modifier = Modifier,
     model: ProfileViewModel = viewModel()
 ) {
+    val user by model.user.collectAsStateWithLifecycle()
+
     Box(
         modifier = modifier
             .fillMaxSize()
     ) {
-        if (model.user == null) {
+        if (user == null) {
             CircularProgressIndicator(
                 color = colorResource(R.color.main_color_lowered_contrast),
                 modifier = Modifier
@@ -82,7 +88,6 @@ fun ProfileScreen(
             )
         }
         else {
-            val user = model.user!!
             Scaffold(
                 bottomBar = {
                     Row(
@@ -96,7 +101,7 @@ fun ProfileScreen(
                             modifier = Modifier
                                 .wrapContentSize()
                                 .background(colorResource(R.color.main_color_lowered_contrast))
-                                .clickable { model.onEditTagsButtonClick(navController) }
+                                .clickable { navController.navigate(Route.EditTagsScreen.route) }
                         ) {
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally
@@ -115,7 +120,7 @@ fun ProfileScreen(
                             modifier = Modifier
                                 .wrapContentSize()
                                 .background(colorResource(R.color.main_color_lowered_contrast))
-                                .clickable { model.onEditProfileButtonClick(navController) }
+                                .clickable { navController.navigate(Route.EditProfileScreen.route) }
                         ) {
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally
@@ -141,7 +146,7 @@ fun ProfileScreen(
                         .verticalScroll(rememberScrollState())
                 ) {
                     AsyncImage(
-                        model = user.avatarUrl,
+                        model = user!!.avatarUrl,
                         contentDescription = "User avatar",
                         placeholder = painterResource(R.drawable.placeholder_background),
                         fallback = painterResource(R.drawable.placeholder_background),
@@ -155,7 +160,7 @@ fun ProfileScreen(
                     )
                     Spacer(Modifier.height(20.dp))
                     Text(
-                        text = user.name,
+                        text = user!!.name,
                         fontSize = 36.sp,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -175,7 +180,7 @@ fun ProfileScreen(
                     FlowRow(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        user.tags.forEach { tag ->
+                        user!!.tags.forEach { tag ->
                             FilterChip(
                                 selected = false,
                                 onClick = {},

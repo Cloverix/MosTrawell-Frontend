@@ -16,7 +16,7 @@ object LandmarkMapper {
                 val tag: Tag? = findTagByName(tagName)
                 tag?:throw IllegalArgumentException("Tag does not exist")
                 tag
-            }
+            }.toSet()
         )
     }
     fun mapUiModel(uiModel: LandmarkUiModel): LandmarkDto {
@@ -25,7 +25,7 @@ object LandmarkMapper {
             name = uiModel.name,
             address = uiModel.address,
             desc = uiModel.desc,
-            tags = uiModel.tags.map { it.toString() }
+            tags = uiModel.tags.map { it.toString() }.toSet()
         )
     }
 }

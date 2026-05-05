@@ -4,11 +4,13 @@ import com.example.mostrawell.data.remote.dto.UserDto
 import com.example.mostrawell.domain.entity.tag.Tag
 import com.example.mostrawell.domain.util.findTagByName
 import com.example.mostrawell.ui.model.UserUiModel
+import kotlin.math.log
 
 object UserMapper {
     fun mapDto(dto: UserDto): UserUiModel {
         return UserUiModel(
             id = dto.id,
+            login = dto.login,
             name = dto.name,
             age = dto.age.toString(),
             avatarUrl = dto.avatarUrl,
@@ -23,6 +25,7 @@ object UserMapper {
     fun mapUiModel(uiModel: UserUiModel): UserDto {
         return UserDto(
             id = uiModel.id,
+            login = uiModel.login,
             name = uiModel.name,
             age = uiModel.age.toInt(),
             avatarUrl = uiModel.avatarUrl,

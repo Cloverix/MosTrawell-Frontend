@@ -1,26 +1,50 @@
 package com.example.mostrawell.ui.screen.edit_profile
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.example.mostrawell.domain.entity.tag.EntertainmentTag
+import androidx.lifecycle.viewModelScope
 import com.example.mostrawell.domain.repository.UserRepository
 import com.example.mostrawell.domain.util.ProfileDataManager
 import com.example.mostrawell.ui.model.UserUiModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
-class EditProfileViewModel(profileManager: ProfileDataManager, userRepository: UserRepository): ViewModel() {
-    //TODO: для тестов имя задано изначально; позже его нужно будет получать из DataStore (вошедший в данный момент пользователь)
-    var name: String by mutableStateOf("Alex")
-        private set
+class EditProfileViewModel(private val profileManager: ProfileDataManager, private val userRepository: UserRepository): ViewModel() {
+    val user: StateFlow<UserUiModel?> = profileManager.getProfileFlow().stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = null
+    )
+    private var _name = MutableStateFlow<String>("")
+    val name: StateFlow<String> = _name
+
+    init {
+        viewModelScope.launch {
+            user.collect { userData ->
+                _name.value = userData?.name ?: ""
+            }
+        }
+    }
 
     fun onNameChange(newName: String) {
-        name = newName
+        _name.value = newName
+    }
+
+    fun onFocusLost() {
+        if (_name.value.isBlank()) {
+            _name.value = user.value?.name ?: ""
+        }
     }
 
     fun onDoneButtonClick() {
-        if (name.isNotBlank()) {
-            //TODO: Save changed name to database & navigate to ProfileScreen
+        val userId = user.value?.id ?: return
+        viewModelScope.launch {
+            if (_name.value.isNotBlank()) {
+                profileManager.updateName(_name.value)
+                userRepository.changeName(userId, _name.value)
+            }
         }
     }
 }

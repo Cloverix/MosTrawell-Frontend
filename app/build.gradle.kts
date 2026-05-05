@@ -85,6 +85,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
     implementation("io.ktor:ktor-client-core:3.3.0")
     implementation("io.ktor:ktor-client-android:3.3.0")
+    implementation("io.ktor:ktor-client-auth:3.3.0")
     implementation("io.ktor:ktor-client-content-negotiation:3.3.0")
     implementation("io.ktor:ktor-serialization-kotlinx-json:3.3.0")
     implementation("io.insert-koin:koin-android:4.2.1")

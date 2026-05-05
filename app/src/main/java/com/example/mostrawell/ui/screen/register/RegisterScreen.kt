@@ -10,28 +10,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuBoxScope
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,19 +35,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.mostrawell.R
+import com.example.mostrawell.domain.util.OperationResult
 import com.example.mostrawell.domain.util.validateAge
 import com.example.mostrawell.ui.component.GradientMainScreen
-import kotlinx.serialization.descriptors.PrimitiveKind
+import com.example.mostrawell.ui.navigation.Route
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
-import kotlin.time.Duration
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -148,7 +139,15 @@ fun RegisterScreen(
                         .fillMaxWidth()
                 )
                 Button(
-                    onClick = { model.onDoneButtonClick(navController) },
+                    onClick = {
+                        model.viewModelScope.launch {
+                            when (val registrationResult = model.onDoneButtonClick()) {
+                                is OperationResult.Success -> navController.navigate(Route.InterestSelection.route)
+                                is OperationResult.Failure -> Toast.makeText(context, registrationResult.message, Toast.LENGTH_SHORT).show()
+                                else -> {}
+                            }
+                        }
+                    },
                     colors = ButtonColors(
                         containerColor = colorResource(R.color.main_color),
                         contentColor = colorResource(R.color.black),
@@ -183,7 +182,7 @@ fun RegisterScreen(
                     fontWeight = FontWeight.SemiBold
                 )
                 OutlinedButton(
-                    onClick = { model.onSignInButtonClick(navController) },
+                    onClick = { navController.navigate(Route.SignIn.route) },
                     colors = ButtonColors(
                         containerColor = Color(0, 0, 0, 0),
                         contentColor = colorResource(R.color.black),

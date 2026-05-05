@@ -4,15 +4,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import com.example.mostrawell.domain.repository.UserRepository
-import com.example.mostrawell.ui.navigation.Route
+import com.example.mostrawell.domain.util.ProfileDataManager
+import com.example.mostrawell.domain.util.Resource
+import com.example.mostrawell.domain.util.OperationResult
 
-class SignInViewModel(private val userRepository: UserRepository): ViewModel() {
+class SignInViewModel(private val userRepository: UserRepository, private val profileManager: ProfileDataManager): ViewModel() {
     var login by mutableStateOf("")
         private set
-    var password by mutableStateOf("")      //Needs to be encoded instantly after user input
+    var password by mutableStateOf("")      //TODO: Needs to be encoded instantly after user input
         private set
 
     fun onLoginChange(newLogin: String) {
@@ -23,12 +23,15 @@ class SignInViewModel(private val userRepository: UserRepository): ViewModel() {
         password = newPassword
     }
 
-    fun onDoneButtonClick() {
-        //TODO: validate user (check in repository)
-    }
-
-    fun onSignUpButtonClick(navController: NavHostController) {
-        navController.navigate(Route.Register.route)
+    suspend fun onDoneButtonClick(): OperationResult {
+        val validationResult = userRepository.login(login, password)
+        if (validationResult is Resource.Success) {
+            profileManager.saveProfile(validationResult.data)
+            return OperationResult.Success
+        }
+        else {
+            return OperationResult.Failure("Wrong login or password. Try again")
+        }
     }
 
     fun isDoneButtonEnabled(): Boolean {

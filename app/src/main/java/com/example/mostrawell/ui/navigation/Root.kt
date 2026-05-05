@@ -4,11 +4,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemColors
-import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,13 +23,12 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.mostrawell.R
-import com.example.mostrawell.ui.screen.recomendation_feed.RecommendationFeedScreen
+import com.example.mostrawell.ui.screen.recommendation_feed.RecommendationFeedScreen
 
 @Preview(showSystemUi = true)
 @Composable
@@ -46,7 +45,7 @@ fun Root(navController: NavHostController = rememberNavController()) {
         disabledTextColor = Color.Unspecified
     )
 
-    if (userSignedIn) {
+    if (userSignedIn) {     //TODO: ТОЛЬКО ДЛЯ ТЕСТА, убрать позже
         Scaffold(
             topBar = {
                 Box(
@@ -109,7 +108,10 @@ fun Root(navController: NavHostController = rememberNavController()) {
                 startDestination = Route.RecommendationFeedScreen.route
             ) {
                 composable(Route.RecommendationFeedScreen.route) {
-                    RecommendationFeedScreen()
+                    RecommendationFeedScreen(
+                        navController,
+                        modifier = Modifier.padding(innerPadding)
+                    )
                 }
             }
         }

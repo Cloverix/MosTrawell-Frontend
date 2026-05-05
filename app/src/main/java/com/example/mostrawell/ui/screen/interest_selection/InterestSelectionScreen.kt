@@ -35,19 +35,15 @@ import com.example.mostrawell.domain.entity.tag.EntertainmentTag
 import com.example.mostrawell.domain.entity.tag.LocationTag
 import com.example.mostrawell.ui.component.SimpleScaffold
 import com.example.mostrawell.ui.model.UserUiModel
+import com.example.mostrawell.ui.navigation.Route
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun InterestSelectionScreen(    //TODO: переделать все под работу с DataStore и UserRepository
+fun InterestSelectionScreen(
     navController: NavHostController,
     modifier: Modifier = Modifier,
     model: InterestSelectionViewModel = koinViewModel()
 ) {
-    val factory = remember(user.id) { InterestSelectionViewModelFactory(user) }
-    val model: InterestSelectionViewModel = viewModel(
-        key = user.id.toString(),
-        factory = factory
-    )
     SimpleScaffold{ paddingValues ->
         Column(
             modifier = Modifier
@@ -148,7 +144,10 @@ fun InterestSelectionScreen(    //TODO: переделать все под ра�
                 }
             }
             OutlinedButton(
-                onClick = { model.onDoneButtonClick() },
+                onClick = {
+                    model.onDoneButtonClick()
+                    navController.navigate(Route.ProfileScreen.route)
+                },
                 enabled = model.isDoneButtonEnabled(),
                 colors = ButtonColors(
                     containerColor = colorResource(R.color.main_color),
@@ -171,5 +170,5 @@ fun InterestSelectionScreen(    //TODO: переделать все под ра�
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun Preview() {
-    InterestSelectionScreen(rememberNavController(), user = UserUiModel(1, "Alex", "19", null, EntertainmentTag.entries.toList()))
+    InterestSelectionScreen(rememberNavController())
 }

@@ -4,27 +4,41 @@ import com.example.mostrawell.data.remote.dto.UserDto
 import com.example.mostrawell.data.remote.dto.UserRegisterDto
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.request.basicAuth
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
+import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 import io.ktor.client.request.patch
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
 import io.ktor.http.isSuccess
+import io.ktor.util.encodeBase64
 import java.lang.Exception
+import java.util.Base64
+import kotlin.math.log
 
 class UserApiService(private val client: HttpClient) {
+    suspend fun getById(id: Long): UserDto {
+        return client.get("/$id").body()
+    }
+
+    suspend fun getByLogin(login: String): UserDto {
+        return client.get("/searchByLogin/$login").body()
+    }
+
     suspend fun login(
         login: String,
         password: String
-    ): UserDto? {
-        TODO("Not yet implemented")
-    }
-
-    suspend fun getById(id: Long): UserDto {
-        return client.get("/$id").body()
+    ): UserDto {
+        val credentials = "$login:$password"
+        val encodedCredentials = credentials.encodeBase64()
+        return client.get("/login") {
+            header(HttpHeaders.Authorization, "Basic $encodedCredentials")
+        }.body()
     }
 
     suspend fun register(dto: UserRegisterDto): UserDto {
@@ -46,7 +60,7 @@ class UserApiService(private val client: HttpClient) {
 
     suspend fun changeTags(
         id: Long,
-        tags: List<String>
+        tags: Set<String>
     ): UserDto {
         return client.patch("/editTags") {
             parameter("id", id)

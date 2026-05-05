@@ -1,5 +1,6 @@
 package com.example.mostrawell.ui.screen.sign_in
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,13 +18,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -32,11 +33,15 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.mostrawell.R
+import com.example.mostrawell.domain.util.OperationResult
 import com.example.mostrawell.ui.component.GradientMainScreen
+import com.example.mostrawell.ui.navigation.Route
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -45,6 +50,8 @@ fun SignInScreen(
         modifier: Modifier = Modifier,
         model: SignInViewModel = koinViewModel()
     ) {
+    val context = LocalContext.current
+
     GradientMainScreen(
         gradientColor1 = colorResource(R.color.main_color),
         gradientColor2 = colorResource(R.color.white)
@@ -80,7 +87,16 @@ fun SignInScreen(
                     modifier = Modifier
                 )
                 Button(
-                    onClick = { model.onDoneButtonClick() },
+                    onClick = {
+                        model.viewModelScope.launch {
+                            when (val validationResult = model.onDoneButtonClick()) {
+                                is OperationResult.Success -> navController.navigate(Route.RecommendationFeedScreen.route)
+                                is OperationResult.Failure -> Toast.makeText(context, validationResult.message,
+                                    Toast.LENGTH_SHORT).show()
+                                else -> {}
+                            }
+                        }
+                    },
                     colors = ButtonColors(
                         containerColor = colorResource(R.color.main_color),
                         contentColor = colorResource(R.color.black),
@@ -115,7 +131,7 @@ fun SignInScreen(
                     fontWeight = FontWeight.SemiBold
                 )
                 OutlinedButton(
-                    onClick = { model.onSignUpButtonClick(navController) },
+                    onClick = { navController.navigate(Route.Register.route) },
                     colors = ButtonColors(
                         containerColor = Color(0, 0, 0, 0),
                         contentColor = colorResource(R.color.black),

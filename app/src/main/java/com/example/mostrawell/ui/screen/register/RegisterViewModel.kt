@@ -4,15 +4,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import com.example.mostrawell.data.remote.dto.UserRegisterDto
 import com.example.mostrawell.domain.repository.UserRepository
+import com.example.mostrawell.domain.util.ProfileDataManager
+import com.example.mostrawell.domain.util.OperationResult
+import com.example.mostrawell.domain.util.Resource
 import com.example.mostrawell.ui.model.UserUiModel
-import com.example.mostrawell.ui.navigation.Route
-import kotlin.math.log
 
-class RegisterViewModel(private val userRepository: UserRepository): ViewModel() {
+class RegisterViewModel(private val profileManager: ProfileDataManager, private val userRepository: UserRepository): ViewModel() {
     var nickname by mutableStateOf("")
         private set
     var age by mutableStateOf("")
@@ -50,14 +49,24 @@ class RegisterViewModel(private val userRepository: UserRepository): ViewModel()
         return true
     }
 
-    fun onDoneButtonClick(navController: NavHostController) {
-        //TODO: POST login and password to DB and save it inside userDataStore
-        // or return "User with such login and password already exists" exception
-        navController.navigate(Route.InterestSelection.route)
+    private suspend fun checkIfUserExists(): Boolean {
+        val resource: Resource<UserUiModel> = userRepository.getByLogin(login)
+        return resource is Resource.Success
     }
 
-    fun onSignInButtonClick(navController: NavHostController) {
-        navController.navigate(Route.SignIn.route)
+    suspend fun onDoneButtonClick(): OperationResult {
+        if (checkIfUserExists()) {
+            return OperationResult.Failure("User with login $login already exists")
+        }
+        val userRegisterDto = UserRegisterDto(nickname, age.toInt(), login, password)
+        val registeredUser: Resource<UserUiModel> = userRepository.register(userRegisterDto)
+        return when (registeredUser) {
+            is Resource.Success -> {
+                profileManager.saveProfile(registeredUser.data)
+                OperationResult.Success
+            }
+            is Resource.Failure -> OperationResult.Failure(registeredUser.message)
+        }
     }
 
     fun isDoneButtonEnabled(): Boolean {
