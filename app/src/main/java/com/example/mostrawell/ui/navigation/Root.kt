@@ -1,135 +1,93 @@
 package com.example.mostrawell.ui.navigation
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import android.util.Log
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemColors
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.mostrawell.R
+import com.example.mostrawell.domain.util.AuthState
+import com.example.mostrawell.ui.component.MainScaffold
+import com.example.mostrawell.ui.screen.edit_profile.EditProfileScreen
+import com.example.mostrawell.ui.screen.interest_selection.InterestSelectionScreen
+import com.example.mostrawell.ui.screen.landmark_details.LandmarkDetailsScreen
+import com.example.mostrawell.ui.screen.profile.ProfileScreen
 import com.example.mostrawell.ui.screen.recommendation_feed.RecommendationFeedScreen
+import com.example.mostrawell.ui.screen.register.RegisterScreen
+import com.example.mostrawell.ui.screen.settings.SettingsScreen
+import com.example.mostrawell.ui.screen.sign_in.SignInScreen
+import org.koin.compose.koinInject
 
-@Preview(showSystemUi = true)
 @Composable
-fun Root(navController: NavHostController = rememberNavController()) {
-    var userSignedIn by rememberSaveable { mutableStateOf(true) }      //TODO: ТОЛЬКО ДЛЯ ТЕСТА, убрать позже
-    var selectedScreen by rememberSaveable { mutableIntStateOf(0) }
-    val navigationBarItemColors = NavigationBarItemColors(
-        selectedIndicatorColor = colorResource(R.color.main_color_lowered_contrast),
-        selectedTextColor = Color.Unspecified,
-        selectedIconColor = Color.Unspecified,
-        unselectedIconColor = Color.Unspecified,
-        unselectedTextColor = Color.Unspecified,
-        disabledIconColor = Color.Unspecified,
-        disabledTextColor = Color.Unspecified
-    )
+fun Root(
+    authState: AuthState = koinInject(),
+    navController: NavHostController = rememberNavController()
+) {
+    Log.d("TTT", "Root launch")
+    val isUserLoggedIn by authState.isUserLoggedIn.collectAsStateWithLifecycle()
 
-    if (userSignedIn) {     //TODO: ТОЛЬКО ДЛЯ ТЕСТА, убрать позже
-        Scaffold(
-            topBar = {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(40.dp)
-                        .background(
-                            colorResource(R.color.main_color_lowered_contrast)
-                        )
-                )
-            },
-            bottomBar = {
-                NavigationBar(
-                    containerColor = colorResource(R.color.main_color_low_contrast)
-                ) {
-                    NavigationBarItem(
-                        selected = selectedScreen == 0,
-                        onClick = {selectedScreen = 0},
-                        icon = {
-                            Icon(
-                                painter = painterResource(R.drawable.magnifying_glass_icon),
-                                contentDescription = "Magnifying glass icon",
-                                tint = Color.Black
-                            )
-                        },
-                        label = { Text(text = "Feed") },
-                        colors = navigationBarItemColors
-                    )
-                    NavigationBarItem(
-                        selected = selectedScreen == 1,
-                        onClick = {selectedScreen = 1},
-                        icon = {
-                            Icon(
-                                painter = painterResource(R.drawable.user_icon),
-                                contentDescription = "User icon",
-                                tint = Color.Black
-                            )
-                        },
-                        label = { Text(text = "Profile") },
-                        colors = navigationBarItemColors
-                    )
-                    NavigationBarItem(
-                        selected = selectedScreen == 2,
-                        onClick = {selectedScreen = 2},
-                        icon = {
-                            Icon(
-                                painter = painterResource(R.drawable.gear_icon),
-                                contentDescription = "Gear icon",
-                                tint = Color.Black
-                            )
-                        },
-                        label = { Text(text = "Settings") },
-                        colors = navigationBarItemColors
-                    )
-                }
-            }
-        ) { innerPadding ->
+    if (isUserLoggedIn) {
+        MainScaffold(navController) { innerPadding ->
             NavHost(
                 navController = navController,
                 startDestination = Route.RecommendationFeedScreen.route
             ) {
+                composable(Route.EditProfileScreen.route) {
+                    EditProfileScreen(
+                        navController,
+                        modifier = Modifier.padding(innerPadding)
+                    )
+                }
+                composable(Route.LandmarkDetailsScreen.route) { backStackEntry ->
+                    val landmarkId = backStackEntry.arguments?.getString("landmark_id")?.toLong() ?: -1     //Иначе невалидный id
+                    LandmarkDetailsScreen(
+                        navController,
+                        landmarkId,
+                        modifier = Modifier.padding(innerPadding)
+                    )
+                }
+                composable(Route.ProfileScreen.route) {
+                    ProfileScreen(
+                        navController,
+                        modifier = Modifier.padding(innerPadding)
+                    )
+                }
                 composable(Route.RecommendationFeedScreen.route) {
                     RecommendationFeedScreen(
                         navController,
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
+                composable(Route.SettingsScreen.route) {
+                    SettingsScreen(
+                        modifier = Modifier.padding(innerPadding)
+                    )
+                }
             }
         }
     }
-    /*
-    NavHost(
-        navController = navController,
-        startDestination = Route.Register.route
-    ) {
-        composable(Route.Register.route) {
-            RegisterScreen(navController)
-        }
-        composable(Route.SignIn.route) {
-            SignInScreen(navController)
-        }
-        composable(Route.InterestSelection.route) {
-            InterestSelectionScreen(navController)
+    else {
+        NavHost(
+            navController,
+            startDestination = Route.SignInScreen.route
+        ) {
+            composable(Route.SignInScreen.route) {
+                SignInScreen(
+                    navController
+                )
+            }
+            composable(Route.RegisterScreen.route) {
+                RegisterScreen(
+                    navController
+                )
+            }
+            composable(Route.InterestSelection.route) {
+                InterestSelectionScreen()
+            }
         }
     }
-    */
 }

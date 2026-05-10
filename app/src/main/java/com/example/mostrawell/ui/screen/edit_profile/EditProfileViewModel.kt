@@ -3,7 +3,7 @@ package com.example.mostrawell.ui.screen.edit_profile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mostrawell.domain.repository.UserRepository
-import com.example.mostrawell.domain.util.ProfileDataManager
+import com.example.mostrawell.domain.util.ProfileManager
 import com.example.mostrawell.ui.model.UserUiModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class EditProfileViewModel(private val profileManager: ProfileDataManager, private val userRepository: UserRepository): ViewModel() {
+class EditProfileViewModel(private val profileManager: ProfileManager, private val userRepository: UserRepository): ViewModel() {
     val user: StateFlow<UserUiModel?> = profileManager.getProfileFlow().stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),

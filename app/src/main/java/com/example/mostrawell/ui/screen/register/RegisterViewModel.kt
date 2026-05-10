@@ -6,12 +6,14 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.mostrawell.data.remote.dto.UserRegisterDto
 import com.example.mostrawell.domain.repository.UserRepository
-import com.example.mostrawell.domain.util.ProfileDataManager
+import com.example.mostrawell.domain.util.ProfileManager
 import com.example.mostrawell.domain.util.OperationResult
 import com.example.mostrawell.domain.util.Resource
 import com.example.mostrawell.ui.model.UserUiModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
-class RegisterViewModel(private val profileManager: ProfileDataManager, private val userRepository: UserRepository): ViewModel() {
+class RegisterViewModel(private val profileManager: ProfileManager, private val userRepository: UserRepository): ViewModel() {
     var nickname by mutableStateOf("")
         private set
     var age by mutableStateOf("")
@@ -23,6 +25,9 @@ class RegisterViewModel(private val profileManager: ProfileDataManager, private 
         private set
     var duplicatePassword by mutableStateOf("")
         private set
+
+    private val _uiState = MutableStateFlow<OperationResult>(OperationResult.Success)
+    val uiState: StateFlow<OperationResult> = _uiState
 
     fun onNicknameChange(newNickname: String) {
         nickname = newNickname
@@ -45,8 +50,7 @@ class RegisterViewModel(private val profileManager: ProfileDataManager, private 
     }
 
     private fun validatePassword(): Boolean {
-        //TODO: add validation and check that password and duplicatePassword are the same
-        return true
+        return password.isNotBlank() && password == duplicatePassword
     }
 
     private suspend fun checkIfUserExists(): Boolean {
@@ -55,17 +59,31 @@ class RegisterViewModel(private val profileManager: ProfileDataManager, private 
     }
 
     suspend fun onDoneButtonClick(): OperationResult {
-        if (checkIfUserExists()) {
-            return OperationResult.Failure("User with login $login already exists")
-        }
-        val userRegisterDto = UserRegisterDto(nickname, age.toInt(), login, password)
-        val registeredUser: Resource<UserUiModel> = userRepository.register(userRegisterDto)
-        return when (registeredUser) {
-            is Resource.Success -> {
-                profileManager.saveProfile(registeredUser.data)
-                OperationResult.Success
+        _uiState.value = OperationResult.Loading
+        try {
+            if (checkIfUserExists()) {
+                _uiState.value = OperationResult.Success
+                return OperationResult.Failure("User with login $login already exists")
             }
-            is Resource.Failure -> OperationResult.Failure(registeredUser.message)
+            val userRegisterDto = UserRegisterDto(nickname, age.toInt(), login, password)
+            val registeredUser: Resource<UserUiModel> = userRepository.register(userRegisterDto)
+            return when (registeredUser) {
+                is Resource.Success -> {
+                    profileManager.saveProfile(registeredUser.data)
+                    profileManager.savePassword(password)
+                    _uiState.value = OperationResult.Success
+                    OperationResult.Success
+                }
+
+                is Resource.Failure -> {
+                    _uiState.value = OperationResult.Success
+                    OperationResult.Failure(registeredUser.message)
+                }
+            }
+        }
+        catch (e: Exception) {
+            _uiState.value = OperationResult.Success
+            return OperationResult.Failure(e.message ?: "Unknown exception");
         }
     }
 

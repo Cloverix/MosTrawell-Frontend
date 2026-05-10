@@ -1,14 +1,11 @@
 package com.example.mostrawell.domain.util
 
 import android.content.Context
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
-import com.example.mostrawell.R
 import com.example.mostrawell.data.userDataStore
 import com.example.mostrawell.domain.entity.tag.Tag
 import com.example.mostrawell.ui.model.UserUiModel
@@ -16,10 +13,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
-class ProfileDataManager(private val context: Context) {
+class ProfileManager(
+    private val context: Context) {
     companion object {
         val USER_ID = longPreferencesKey("user_id")
         val USER_LOGIN = stringPreferencesKey("user_login")
+        val USER_PASSWORD = stringPreferencesKey("user_password")
         val USER_NAME = stringPreferencesKey("user_name")
         val USER_AGE = intPreferencesKey("user_age")
         val USER_AVATAR_URL = stringPreferencesKey("user_avatar_url")
@@ -38,8 +37,32 @@ class ProfileDataManager(private val context: Context) {
         }
     }
 
+    suspend fun getId(): Long? {
+        return context.userDataStore.data.map { preferences ->
+            preferences[USER_ID]
+        }.first()
+    }
+
+    suspend fun getLogin(): String? {
+        return context.userDataStore.data.map { preferences ->
+            preferences[USER_LOGIN]
+        }.first()
+    }
+
+    suspend fun getPassword(): String? {
+        return context.userDataStore.data.map { preferences ->
+            preferences[USER_PASSWORD]
+        }.first()
+    }
+
     suspend fun getProfile(): UserUiModel? {
         return getProfileFlow().first()
+    }
+
+    suspend fun savePassword(password: String) {
+        context.userDataStore.edit { preferences ->
+            preferences[USER_PASSWORD] = password
+        }
     }
 
     suspend fun saveProfile(user: UserUiModel) {
@@ -65,5 +88,16 @@ class ProfileDataManager(private val context: Context) {
         context.userDataStore.edit { preferences ->
             preferences[USER_TAGS] = tags.map { tag -> tag.getName() }.toSet()
         }
+    }
+
+    suspend fun isUserLoggedIn(): Boolean {
+        return context.userDataStore.data.first()[USER_ID] != null
+    }
+
+    suspend fun clear(): OperationResult {
+        context.userDataStore.edit { preferences ->
+            preferences.clear()
+        }
+        return OperationResult.Success
     }
 }

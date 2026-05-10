@@ -1,10 +1,11 @@
 package com.example.mostrawell.ui.screen.recommendation_feed
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mostrawell.domain.repository.LandmarkRepository
 import com.example.mostrawell.domain.util.OperationResult
-import com.example.mostrawell.domain.util.ProfileDataManager
+import com.example.mostrawell.domain.util.ProfileManager
 import com.example.mostrawell.domain.util.Resource
 import com.example.mostrawell.ui.model.LandmarkUiModel
 import com.example.mostrawell.ui.model.UserUiModel
@@ -16,7 +17,7 @@ import kotlinx.coroutines.launch
 
 class RecommendationFeedViewModel(
     private val landmarkRepository: LandmarkRepository,
-    private val profileManager: ProfileDataManager
+    private val profileManager: ProfileManager
 ): ViewModel() {
     private val user: StateFlow<UserUiModel?> = profileManager.getProfileFlow().stateIn(
         scope = viewModelScope,
@@ -37,8 +38,7 @@ class RecommendationFeedViewModel(
         viewModelScope.launch {
             user.collect { userData ->
                 _uiState.value = OperationResult.Loading
-                val searchResults = landmarkRepository.getByTags(userData?.tags ?: emptySet())
-                when (searchResults) {
+                when (val searchResults = landmarkRepository.getByTags(userData?.tags ?: emptySet())) {
                     is Resource.Success -> {
                         _foundLandmarks.value = searchResults.data
                         _uiState.value = OperationResult.Success
@@ -62,7 +62,8 @@ class RecommendationFeedViewModel(
     fun onSearch(query: String) {
         viewModelScope.launch {
             _uiState.value = OperationResult.Loading
-            when (val searchResults = landmarkRepository.getByName(query)) {
+            when (val searchResults = if (query.isNotEmpty()) landmarkRepository.getByName(query)
+                                    else landmarkRepository.getByTags(user.value?.tags ?: emptySet())) {
                 is Resource.Success -> {
                     _foundLandmarks.value = searchResults.data
                     _uiState.value = OperationResult.Success

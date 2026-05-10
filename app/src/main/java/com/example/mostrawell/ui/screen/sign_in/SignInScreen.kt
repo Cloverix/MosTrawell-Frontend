@@ -1,5 +1,6 @@
 package com.example.mostrawell.ui.screen.sign_in
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -38,18 +39,22 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.mostrawell.R
+import com.example.mostrawell.domain.util.AuthState
 import com.example.mostrawell.domain.util.OperationResult
 import com.example.mostrawell.ui.component.GradientMainScreen
 import com.example.mostrawell.ui.navigation.Route
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 @Composable
 fun SignInScreen(
-        navController: NavHostController,
-        modifier: Modifier = Modifier,
-        model: SignInViewModel = koinViewModel()
+    navController: NavHostController,
+    modifier: Modifier = Modifier,
+    authState: AuthState = koinInject(),
+    model: SignInViewModel = koinViewModel()
     ) {
+    Log.d("TTT", "SignInScreen launch")
     val context = LocalContext.current
 
     GradientMainScreen(
@@ -57,7 +62,7 @@ fun SignInScreen(
         gradientColor2 = colorResource(R.color.white)
     ) {
         Box(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
         ) {
             Column(
@@ -90,7 +95,9 @@ fun SignInScreen(
                     onClick = {
                         model.viewModelScope.launch {
                             when (val validationResult = model.onDoneButtonClick()) {
-                                is OperationResult.Success -> navController.navigate(Route.RecommendationFeedScreen.route)
+                                is OperationResult.Success -> {
+                                    authState.setLoggedInState(true)
+                                }
                                 is OperationResult.Failure -> Toast.makeText(context, validationResult.message,
                                     Toast.LENGTH_SHORT).show()
                                 else -> {}
@@ -131,7 +138,7 @@ fun SignInScreen(
                     fontWeight = FontWeight.SemiBold
                 )
                 OutlinedButton(
-                    onClick = { navController.navigate(Route.Register.route) },
+                    onClick = { navController.navigate(Route.RegisterScreen.route) },
                     colors = ButtonColors(
                         containerColor = Color(0, 0, 0, 0),
                         contentColor = colorResource(R.color.black),
@@ -154,5 +161,5 @@ fun SignInScreen(
 @Preview(showSystemUi = true)
 @Composable
 fun Preview() {
-    SignInScreen(rememberNavController(), model = viewModel())
+    SignInScreen(rememberNavController(), authState = AuthState(), model = viewModel())
 }

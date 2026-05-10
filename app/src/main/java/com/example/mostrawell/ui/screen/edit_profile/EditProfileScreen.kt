@@ -1,5 +1,6 @@
 package com.example.mostrawell.ui.screen.edit_profile
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,6 +27,7 @@ fun EditProfileScreen(
     modifier: Modifier = Modifier,
     model: EditProfileViewModel = viewModel()
 ) {
+    Log.d("TTT", "EditProfileScreen launch")
     val name by model.name.collectAsStateWithLifecycle()
 
     Box(

@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -49,6 +48,7 @@ fun RecommendationFeedScreen(
     modifier: Modifier = Modifier,
     model: RecommendationFeedViewModel = koinViewModel()
 ) {
+    Log.d("TTT", "RecommendationFeedScreen launch")
     val query by model.query.collectAsStateWithLifecycle()
     val foundLandmarks by model.foundLandmarks.collectAsStateWithLifecycle()
     val uiState by model.uiState.collectAsStateWithLifecycle()
@@ -90,16 +90,36 @@ fun RecommendationFeedScreen(
             onExpandedChange = {}
         ) {}
         when(uiState) {
-            is OperationResult.Success -> LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(10.dp),
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(vertical = 20.dp)
-            ) {
-                items(foundLandmarks) { landmark ->
-                    LandmarkCard(
-                        landmark,
-                        Modifier.clickable { navController.navigate(Route.LandmarkDetails.landmarkDetails(landmark.id)) }
+            is OperationResult.Success -> {
+                if (foundLandmarks.isNotEmpty()) {
+                    LazyColumn(
+                        verticalArrangement = Arrangement.spacedBy(10.dp),
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(vertical = 20.dp)
+                    ) {
+                        items(foundLandmarks) { landmark ->
+                            LandmarkCard(
+                                landmark,
+                                Modifier.clickable {
+                                    navController.navigate(
+                                        Route.LandmarkDetailsScreen.landmarkDetails(
+                                            landmark.id
+                                        )
+                                    )
+                                }
+                            )
+                        }
+                    }
+                }
+                else {
+                    Text(
+                        text = "No landmarks found! Try a different query",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(vertical = 20.dp)
                     )
                 }
             }
@@ -110,13 +130,14 @@ fun RecommendationFeedScreen(
             ) {
                 Column {
                     Text(
-                        text = "An error occured",
+                        text = "An error occurred",
                         fontSize = 32.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = Color.Red
                     )
                     Text(
-                        text = (uiState as OperationResult.Failure).message
+                        text = (uiState as OperationResult.Failure).message,
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
                     )
                 }
             }
@@ -154,6 +175,7 @@ fun Preview() {
         testLandmarks.addAll(testLandmarks)
     }
     var query by remember { mutableStateOf("") }
+    val uiState = OperationResult.Success
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -165,12 +187,12 @@ fun Preview() {
                 InputField(
                     query = query,
                     onQueryChange = { query = it },
-                    onSearch = {},
+                    onSearch = { },
                     expanded = false,
                     onExpandedChange = {},
                     trailingIcon = {
                         IconButton(
-                            onClick = {}
+                            onClick = { }
                         ) {
                             Icon(
                                 painter = painterResource(R.drawable.magnifying_glass_icon_bold),
@@ -191,17 +213,55 @@ fun Preview() {
             expanded = false,
             onExpandedChange = {}
         ) {}
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-            modifier = Modifier
-                .weight(1f)
-                .padding(vertical = 20.dp)
-        ) {
-            items(testLandmarks) { landmark ->
-                LandmarkCard(
-                    landmark,
-                    Modifier.clickable {}
-                )
+        when (uiState) {
+            is OperationResult.Success -> {
+                if (testLandmarks.isNotEmpty()) {
+                    LazyColumn(
+                        verticalArrangement = Arrangement.spacedBy(10.dp),
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(vertical = 20.dp)
+                    ) {
+                        items(testLandmarks) { landmark ->
+                            LandmarkCard(landmark)
+                        }
+                    }
+                } else {
+                    Text(
+                        text = "No landmarks found! Try a different query",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(vertical = 20.dp)
+                    )
+                }
+            }
+
+            is OperationResult.Failure -> Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                Column {
+                    Text(
+                        text = "An error occurred",
+                        fontSize = 32.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.Red
+                    )
+                    Text(
+                        text = (uiState as OperationResult.Failure).message,
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    )
+                }
+            }
+
+            is OperationResult.Loading -> Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                CircularProgressIndicator(Modifier.scale(0.8f))
             }
         }
     }

@@ -5,11 +5,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.mostrawell.domain.repository.UserRepository
-import com.example.mostrawell.domain.util.ProfileDataManager
+import com.example.mostrawell.domain.util.ProfileManager
 import com.example.mostrawell.domain.util.Resource
 import com.example.mostrawell.domain.util.OperationResult
 
-class SignInViewModel(private val userRepository: UserRepository, private val profileManager: ProfileDataManager): ViewModel() {
+class SignInViewModel(private val userRepository: UserRepository, private val profileManager: ProfileManager): ViewModel() {
     var login by mutableStateOf("")
         private set
     var password by mutableStateOf("")      //TODO: Needs to be encoded instantly after user input
@@ -27,6 +27,7 @@ class SignInViewModel(private val userRepository: UserRepository, private val pr
         val validationResult = userRepository.login(login, password)
         if (validationResult is Resource.Success) {
             profileManager.saveProfile(validationResult.data)
+            profileManager.savePassword(password)
             return OperationResult.Success
         }
         else {

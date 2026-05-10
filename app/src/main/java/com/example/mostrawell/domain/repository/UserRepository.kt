@@ -16,5 +16,5 @@ interface UserRepository {
     suspend fun changeName(id: Long, name: String): Resource<UserUiModel>
     suspend fun changeTags(id: Long, tags: Set<String>): Resource<UserUiModel>
     //DELETE
-    suspend fun deleteById(id: Long): Resource<Unit>
+    suspend fun deleteUser(): Resource<Unit>
 }

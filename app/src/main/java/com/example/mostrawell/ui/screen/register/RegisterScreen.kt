@@ -1,5 +1,6 @@
 package com.example.mostrawell.ui.screen.register
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,12 +17,14 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,33 +41,40 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.mostrawell.R
+import com.example.mostrawell.domain.util.AuthState
 import com.example.mostrawell.domain.util.OperationResult
 import com.example.mostrawell.domain.util.validateAge
 import com.example.mostrawell.ui.component.GradientMainScreen
 import com.example.mostrawell.ui.navigation.Route
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen(
-        navController: NavHostController,
-        modifier: Modifier = Modifier,
-        model: RegisterViewModel = koinViewModel()
+    navController: NavHostController,
+    modifier: Modifier = Modifier,
+    authState: AuthState = koinInject(),
+    model: RegisterViewModel = koinViewModel()
     ) {
+    Log.d("TTT", "RegisterScreen launch")
     val context = LocalContext.current
+
+    val uiState by model.uiState.collectAsStateWithLifecycle()
 
     GradientMainScreen(
         gradientColor1 = colorResource(R.color.main_color),
         gradientColor2 = colorResource(R.color.white)
     ) {
         Box(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
         ) {
             Column(
@@ -141,10 +151,20 @@ fun RegisterScreen(
                 Button(
                     onClick = {
                         model.viewModelScope.launch {
-                            when (val registrationResult = model.onDoneButtonClick()) {
-                                is OperationResult.Success -> navController.navigate(Route.InterestSelection.route)
-                                is OperationResult.Failure -> Toast.makeText(context, registrationResult.message, Toast.LENGTH_SHORT).show()
-                                else -> {}
+                            try {
+                                when (val registrationResult = model.onDoneButtonClick()) {
+                                    is OperationResult.Success -> navController.navigate(Route.InterestSelection.route);
+                                    is OperationResult.Failure -> Toast.makeText(
+                                        context,
+                                        registrationResult.message,
+                                        Toast.LENGTH_LONG
+                                    ).show()
+
+                                    else -> {}
+                                }
+                            }
+                            catch (e: Exception) {
+                                Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
                             }
                         }
                     },
@@ -160,20 +180,24 @@ fun RegisterScreen(
                         .clip(CircleShape)
                         .padding(vertical = 20.dp)
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Text(
-                            text = "Done",
-                            fontSize = 16.sp
-                        )
-                        Icon(
-                            painter = painterResource(R.drawable.check_bold_icon),
-                            contentDescription = "Check icon",
-                            modifier = Modifier
-                                .scale(0.75f)
-                        )
+                    when (uiState) {
+                        is OperationResult.Success -> Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = "Done",
+                                fontSize = 16.sp
+                            )
+                            Icon(
+                                painter = painterResource(R.drawable.check_bold_icon),
+                                contentDescription = "Check icon",
+                                modifier = Modifier
+                                    .scale(0.75f)
+                            )
+                        }
+                        is OperationResult.Failure -> {}
+                        is OperationResult.Loading -> CircularProgressIndicator()
                     }
                 }
                 Text(
@@ -182,7 +206,7 @@ fun RegisterScreen(
                     fontWeight = FontWeight.SemiBold
                 )
                 OutlinedButton(
-                    onClick = { navController.navigate(Route.SignIn.route) },
+                    onClick = { navController.navigate(Route.SignInScreen.route) },
                     colors = ButtonColors(
                         containerColor = Color(0, 0, 0, 0),
                         contentColor = colorResource(R.color.black),
@@ -206,5 +230,5 @@ fun RegisterScreen(
 @Preview(showSystemUi = true)
 @Composable
 fun Preview() {
-    RegisterScreen(rememberNavController(), model = viewModel())
+    RegisterScreen(rememberNavController(), authState = AuthState(), model = viewModel())
 }

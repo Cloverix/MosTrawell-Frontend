@@ -67,13 +67,15 @@ import com.example.mostrawell.domain.util.findTagByName
 import com.example.mostrawell.ui.model.UserUiModel
 import com.example.mostrawell.ui.navigation.Route
 import kotlinx.coroutines.flow.StateFlow
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun ProfileScreen(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    model: ProfileViewModel = viewModel()
+    model: ProfileViewModel = koinViewModel()
 ) {
+    Log.d("TTT", "ProfileScreen launch")
     val user by model.user.collectAsStateWithLifecycle()
 
     Box(
