@@ -35,7 +35,7 @@ class LandmarkRepositoryImpl(
     }
 
     override suspend fun getByTags(tags: Set<Tag>): Resource<List<LandmarkUiModel>> {
-        val tagNames = tags.map { tag -> tag.getName()}.toSet()
+        val tagNames = tags.map { tag -> tag.originalName}.toSet()
         return when (val response = landmarkService.getByTags(tagNames)) {
             is Resource.Success -> Resource.Success(response.data.map(LandmarkMapper::mapDto))
             is Resource.Failure -> response

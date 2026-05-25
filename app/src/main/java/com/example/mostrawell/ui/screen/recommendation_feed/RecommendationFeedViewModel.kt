@@ -9,6 +9,8 @@ import com.example.mostrawell.domain.util.ProfileManager
 import com.example.mostrawell.domain.util.Resource
 import com.example.mostrawell.ui.model.LandmarkUiModel
 import com.example.mostrawell.ui.model.UserUiModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -34,6 +36,8 @@ class RecommendationFeedViewModel(
     private var _foundLandmarks = MutableStateFlow<List<LandmarkUiModel>>(emptyList())
     val foundLandmarks: StateFlow<List<LandmarkUiModel>> = _foundLandmarks
 
+    private var searchJob: Job? = null
+
     init {
         viewModelScope.launch {
             user.collect { userData ->
@@ -55,22 +59,33 @@ class RecommendationFeedViewModel(
 
     fun onQueryChange(newQuery: String) {
         _query.value = newQuery
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(500)
+            onSearch(newQuery)
+        }
     }
 
-    //TODO: Сделать debounce для поиска, делать запрос в БД при вводе с некоторой задержкой.
-    //TODO: При смещении фокуса на поле ввода менять иконку поиска на иконку с крестом: очистка поля ввода
-    fun onSearch(query: String) {
+    fun onSearchImmediate(query: String) {
         viewModelScope.launch {
-            _uiState.value = OperationResult.Loading
-            when (val searchResults = if (query.isNotEmpty()) landmarkRepository.getByName(query)
-                                    else landmarkRepository.getByTags(user.value?.tags ?: emptySet())) {
-                is Resource.Success -> {
-                    _foundLandmarks.value = searchResults.data
-                    _uiState.value = OperationResult.Success
-                }
-                is Resource.Failure -> {
-                    _uiState.value = OperationResult.Failure("Landmarks not found")
-                }
+            onSearch(query)
+        }
+    }
+
+    fun clearInputField() {
+        _query.value = ""
+    }
+
+    private suspend fun onSearch(query: String) {
+        _uiState.value = OperationResult.Loading
+        when (val searchResults = if (query.isNotEmpty()) landmarkRepository.getByName(query)
+        else landmarkRepository.getByTags(user.value?.tags ?: emptySet())) {
+            is Resource.Success -> {
+                _foundLandmarks.value = searchResults.data
+                _uiState.value = OperationResult.Success
+            }
+            is Resource.Failure -> {
+                _uiState.value = OperationResult.Failure("Landmarks not found")
             }
         }
     }

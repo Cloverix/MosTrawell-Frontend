@@ -12,6 +12,8 @@ enum class LocationTag: Tag {
     CLUB,
     FAIR;
 
+    override val originalName: String = name
+
     override fun getName(): String {
         return name
             .replace("_", " ")

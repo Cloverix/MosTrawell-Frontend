@@ -1,6 +1,7 @@
 package com.example.mostrawell.ui.screen.landmark_details
 
 import android.util.Log
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
@@ -15,12 +16,14 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -39,7 +42,6 @@ fun LandmarkDetailsScreen(
     landmarkId: Long,
     modifier: Modifier = Modifier
 ) {
-    Log.d("TTT", "LandmarkDetailsScreen launch")
     val model: LandmarkDetailsViewModel = koinViewModel(
         parameters = { parametersOf(landmarkId) }
     )
@@ -55,25 +57,29 @@ fun LandmarkDetailsScreen(
             is OperationResult.Success -> Column(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .padding(horizontal = 10.dp)
                         .verticalScroll(rememberScrollState())
                 ) {
                 Text(
                     text = landmark!!.name,
                     fontSize = 36.sp,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.SemiBold,
+                    lineHeight = 44.sp
                 )
-                Spacer(Modifier.height(30.dp))
+                Spacer(Modifier.height(20.dp))
                 Text(
                     text = "Address: " + landmark!!.address,
                     fontSize = 16.sp
                 )
-                Spacer(Modifier.height(20.dp))
+                Spacer(Modifier.height(10.dp))
                 Text(
                     text = landmark!!.desc,
                     fontSize = 20.sp
                 )
-                Spacer(Modifier.height(20.dp))
-                FlowRow {
+                Spacer(Modifier.height(10.dp))
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(7.dp)
+                ) {
                     landmark!!.tags.forEach { tag ->
                         FilterChip(
                             selected = false,
@@ -100,8 +106,10 @@ fun LandmarkDetailsScreen(
             }
             is OperationResult.Loading -> CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         }
-        IconButton(
+        SmallFloatingActionButton(
             onClick = { navController.navigate(Route.RecommendationFeedScreen.route) },
+            containerColor = colorResource(R.color.main_color),
+            contentColor = Color.White,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(5.dp)

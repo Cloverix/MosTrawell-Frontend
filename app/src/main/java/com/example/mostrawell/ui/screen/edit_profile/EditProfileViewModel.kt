@@ -17,7 +17,7 @@ class EditProfileViewModel(private val profileManager: ProfileManager, private v
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = null
     )
-    private var _name = MutableStateFlow<String>("")
+    private var _name = MutableStateFlow("")
     val name: StateFlow<String> = _name
 
     init {

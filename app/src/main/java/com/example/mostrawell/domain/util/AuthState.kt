@@ -7,6 +7,10 @@ class AuthState {
     private val _isUserLoggedIn = MutableStateFlow(false)
     val isUserLoggedIn: StateFlow<Boolean> = _isUserLoggedIn
 
+    fun getLoggedInState(): Boolean {
+        return _isUserLoggedIn.value
+    }
+
     fun setLoggedInState(loggedInState: Boolean) {
         _isUserLoggedIn.value = loggedInState
     }

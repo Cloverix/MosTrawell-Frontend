@@ -31,17 +31,27 @@ class SettingsViewModel(
     private val _showDeleteAccountDialog = MutableStateFlow(false)
     val showDeleteAccountDialog: StateFlow<Boolean> = _showDeleteAccountDialog
 
+    private var _showLogoutDialog = MutableStateFlow(false)
+    val showLogoutDialog: StateFlow<Boolean> = _showLogoutDialog
+
     init {
-        if (user.value == null) {
-            _uiState.value = OperationResult.Failure("Error: failed to load user profile")
-        }
-        else {
-            _uiState.value = OperationResult.Success
+        viewModelScope.launch {
+            user.collect { userData ->
+                _uiState.value = if (userData != null) OperationResult.Success else OperationResult.Loading
+            }
         }
     }
 
-    fun toggleAlertDialog() {
+    fun toggleDeleteDialog() {
         _showDeleteAccountDialog.value = !_showDeleteAccountDialog.value
+    }
+
+    fun toggleLogoutDialog() {
+        _showLogoutDialog.value = !_showLogoutDialog.value
+    }
+
+    fun logout() {
+        authState.setLoggedInState(false)
     }
 
     fun deleteUser() {

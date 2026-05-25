@@ -20,14 +20,14 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.mostrawell.ui.navigation.Route
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun EditProfileScreen(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    model: EditProfileViewModel = viewModel()
+    model: EditProfileViewModel = koinViewModel()
 ) {
-    Log.d("TTT", "EditProfileScreen launch")
     val name by model.name.collectAsStateWithLifecycle()
 
     Box(

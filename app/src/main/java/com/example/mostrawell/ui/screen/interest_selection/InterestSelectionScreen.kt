@@ -30,19 +30,25 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.mostrawell.R
 import com.example.mostrawell.domain.entity.tag.EntertainmentTag
 import com.example.mostrawell.domain.entity.tag.LocationTag
+import com.example.mostrawell.domain.util.AuthState
 import com.example.mostrawell.domain.util.OperationResult
 import com.example.mostrawell.ui.component.SimpleScaffold
+import com.example.mostrawell.ui.navigation.Route
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 @Composable
 fun InterestSelectionScreen(
+    navController: NavHostController,
     modifier: Modifier = Modifier,
+    authState: AuthState = koinInject(),
     model: InterestSelectionViewModel = koinViewModel()
 ) {
-    Log.d("TTT", "InterestSelectionScreen launch")
     val uiState by model.uiState.collectAsStateWithLifecycle()
     val selectedTags by model.selectedTags.collectAsStateWithLifecycle()
 
@@ -138,7 +144,7 @@ fun InterestSelectionScreen(
                             },
                             label = {
                                 Text(
-                                    text = tag.name
+                                    text = tag.getName()
                                         .replace("_", " ")
                                         .lowercase()
                                         .replaceFirstChar { it.uppercase() }
@@ -155,7 +161,19 @@ fun InterestSelectionScreen(
                 }
                 OutlinedButton(
                     onClick = {
+                        val toNavigate = authState.getLoggedInState()
                         model.onDoneButtonClick()
+                        when (uiState) {
+                            is OperationResult.Success -> {
+                                if (toNavigate) {
+                                    navController.navigate(Route.ProfileScreen.route)
+                                }
+                                else {
+                                    authState.setLoggedInState(true)
+                                }
+                            }
+                            else -> {}
+                        }
                     },
                     enabled = selectedTags.isNotEmpty() && uiState is OperationResult.Success,
                     colors = ButtonColors(
@@ -184,5 +202,5 @@ fun InterestSelectionScreen(
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun Preview() {
-    InterestSelectionScreen()
+    InterestSelectionScreen(rememberNavController(), authState = AuthState())
 }

@@ -1,6 +1,8 @@
 package com.example.mostrawell.ui.navigation
 
 import android.util.Log
+import androidx.compose.animation.core.Transition
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -27,7 +29,6 @@ fun Root(
     authState: AuthState = koinInject(),
     navController: NavHostController = rememberNavController()
 ) {
-    Log.d("TTT", "Root launch")
     val isUserLoggedIn by authState.isUserLoggedIn.collectAsStateWithLifecycle()
 
     if (isUserLoggedIn) {
@@ -36,7 +37,9 @@ fun Root(
                 navController = navController,
                 startDestination = Route.RecommendationFeedScreen.route
             ) {
-                composable(Route.EditProfileScreen.route) {
+                composable(
+                    route = Route.EditProfileScreen.route
+                ) {
                     EditProfileScreen(
                         navController,
                         modifier = Modifier.padding(innerPadding)
@@ -67,6 +70,9 @@ fun Root(
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
+                composable(Route.InterestSelection.route) {
+                    InterestSelectionScreen(navController)
+                }
             }
         }
     }
@@ -86,7 +92,7 @@ fun Root(
                 )
             }
             composable(Route.InterestSelection.route) {
-                InterestSelectionScreen()
+                InterestSelectionScreen(navController)
             }
         }
     }

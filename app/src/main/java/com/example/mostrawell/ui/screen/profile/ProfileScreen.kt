@@ -29,6 +29,7 @@ import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CardElevation
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -75,7 +76,6 @@ fun ProfileScreen(
     modifier: Modifier = Modifier,
     model: ProfileViewModel = koinViewModel()
 ) {
-    Log.d("TTT", "ProfileScreen launch")
     val user by model.user.collectAsStateWithLifecycle()
 
     Box(
@@ -98,44 +98,30 @@ fun ProfileScreen(
                             .fillMaxWidth()
                             .padding(horizontal = 10.dp, vertical = 20.dp)
                     ) {
-                        Box(
-                            contentAlignment = Alignment.Center,
-                            modifier = Modifier
-                                .wrapContentSize()
-                                .background(colorResource(R.color.main_color_lowered_contrast))
-                                .clickable { navController.navigate(Route.EditTagsScreen.route) }
-                        ) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
+                        ExtendedFloatingActionButton(
+                            onClick = { navController.navigate(Route.InterestSelection.route) },
+                            text = { Text("Edit tags") },
+                            icon = {
                                 Icon(
                                     painter = painterResource(R.drawable.note_pencil_icon),
                                     contentDescription = "Note and pencil icon"
                                 )
-                                Text(
-                                    text = "Edit tags"
-                                )
-                            }
-                        }
-                        Box(
-                            contentAlignment = Alignment.Center,
-                            modifier = Modifier
-                                .wrapContentSize()
-                                .background(colorResource(R.color.main_color_lowered_contrast))
-                                .clickable { navController.navigate(Route.EditProfileScreen.route) }
-                        ) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
+                            },
+                            containerColor = colorResource(R.color.main_color_lowered_contrast).copy(alpha = 1f),
+                            contentColor = Color.White
+                        )
+                        ExtendedFloatingActionButton(
+                            onClick = { navController.navigate(Route.EditProfileScreen.route) },
+                            text = { Text("Edit profile") },
+                            icon = {
                                 Icon(
                                     painter = painterResource(R.drawable.pencil_icon),
                                     contentDescription = "Pencil icon"
                                 )
-                                Text(
-                                    text = "Edit profile"
-                                )
-                            }
-                        }
+                            },
+                            containerColor = colorResource(R.color.main_color_lowered_contrast).copy(alpha = 1f),
+                            contentColor = Color.White
+                        )
                     }
                 }
             ) { paddingValues ->

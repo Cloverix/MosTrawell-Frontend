@@ -20,6 +20,8 @@ enum class EntertainmentTag: Tag {
     CHATTING,
     SHOPPING;
 
+    override val originalName: String = name
+
     override fun getName(): String {
         return name
             .replace("_", " ")

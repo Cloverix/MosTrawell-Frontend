@@ -54,7 +54,7 @@ fun LandmarkCard(
                     .align(Alignment.Start)
             )
             Text(
-                text = "Address: " + landmark.address,
+                text = landmark.address,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Light,
                 modifier = Modifier

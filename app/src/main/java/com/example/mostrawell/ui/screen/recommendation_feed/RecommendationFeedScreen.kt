@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -48,7 +50,6 @@ fun RecommendationFeedScreen(
     modifier: Modifier = Modifier,
     model: RecommendationFeedViewModel = koinViewModel()
 ) {
-    Log.d("TTT", "RecommendationFeedScreen launch")
     val query by model.query.collectAsStateWithLifecycle()
     val foundLandmarks by model.foundLandmarks.collectAsStateWithLifecycle()
     val uiState by model.uiState.collectAsStateWithLifecycle()
@@ -63,19 +64,30 @@ fun RecommendationFeedScreen(
                 InputField(
                     query = query,
                     onQueryChange = { model.onQueryChange(it) },
-                    onSearch = { model.onSearch(it) },
+                    onSearch = { model.onSearchImmediate(it)},
                     expanded = false,
                     onExpandedChange = {},
                     trailingIcon = {
-                        IconButton(
-                            onClick = { model.onSearch(query) }
-                        ) {
+                        if (query.isEmpty()) {
                             Icon(
-                            painter = painterResource(R.drawable.magnifying_glass_icon_bold),
-                            contentDescription = "Magnifying glass icon",
-                            modifier = Modifier
-                                .scale(0.75f)
+                                painter = painterResource(R.drawable.magnifying_glass_icon_bold),
+                                contentDescription = "Magnifying glass icon",
+                                modifier = Modifier
+                                    .scale(0.75f)
                             )
+                        }
+                        else {
+                            IconButton(
+                                onClick = {
+                                    model.clearInputField()
+                                    model.onSearchImmediate("")
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Clear,
+                                    contentDescription = "clear_icon"
+                                )
+                            }
                         }
                     },
                     placeholder = {

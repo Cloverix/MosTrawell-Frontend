@@ -11,5 +11,4 @@ sealed class Route(val route: String) {
     object RegisterScreen: Route("register")
     object SettingsScreen: Route("settings")
     object SignInScreen: Route("sign_in")
-    object EditTagsScreen: Route("edit_tags")
 }

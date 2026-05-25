@@ -73,7 +73,7 @@ class ProfileManager(
                 preferences[USER_NAME] = user.name
                 preferences[USER_AGE] = user.age.toInt()
                 preferences[USER_AVATAR_URL] = user.avatarUrl ?: ""
-                preferences[USER_TAGS] = user.tags.map { tag -> tag.getName() }.toSet()
+                preferences[USER_TAGS] = user.tags.map { tag -> tag.originalName }.toSet()
             }
         }
     }
@@ -86,7 +86,7 @@ class ProfileManager(
 
     suspend fun updateTags(tags: Set<Tag>) {
         context.userDataStore.edit { preferences ->
-            preferences[USER_TAGS] = tags.map { tag -> tag.getName() }.toSet()
+            preferences[USER_TAGS] = tags.map { tag -> tag.originalName }.toSet()
         }
     }
 

@@ -23,6 +23,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.mostrawell.R
+import com.example.mostrawell.domain.util.NavigationDirection
 import com.example.mostrawell.ui.navigation.Route
 
 @Composable
@@ -59,8 +60,10 @@ fun MainScaffold(
                 NavigationBarItem(
                     selected = selectedScreen == 0,
                     onClick = {
-                        selectedScreen = 0
-                        navController.navigate(Route.RecommendationFeedScreen.route)
+                        if (selectedScreen != 0) {
+                            selectedScreen = 0
+                            navController.navigate(Route.RecommendationFeedScreen.route)
+                        }
                     },
                     icon = {
                         Icon(
@@ -75,8 +78,10 @@ fun MainScaffold(
                 NavigationBarItem(
                     selected = selectedScreen == 1,
                     onClick = {
-                        selectedScreen = 1
-                        navController.navigate(Route.ProfileScreen.route)
+                        if (selectedScreen != 1) {
+                            selectedScreen = 1
+                            navController.navigate(Route.ProfileScreen.route)
+                        }
                     },
                     icon = {
                         Icon(
@@ -91,8 +96,10 @@ fun MainScaffold(
                 NavigationBarItem(
                     selected = selectedScreen == 2,
                     onClick = {
-                        selectedScreen = 2
-                        navController.navigate(Route.SettingsScreen.route)
+                        if (selectedScreen != 2) {
+                            selectedScreen = 2
+                            navController.navigate(Route.SettingsScreen.route)
+                        }
                     },
                     icon = {
                         Icon(
