@@ -22,7 +22,7 @@ enum class EntertainmentTag: Tag {
 
     override val originalName: String = name
 
-    override fun getName(): String {
+    override fun getFormattedName(): String {
         return name
             .replace("_", " ")
             .lowercase()

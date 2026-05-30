@@ -48,7 +48,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.mostrawell.R
 import com.example.mostrawell.domain.util.OperationResult
 import com.example.mostrawell.domain.util.validateAge
-import com.example.mostrawell.ui.component.GradientMainScreen
+import com.example.mostrawell.ui.component.composable.GradientMainScreen
+import com.example.mostrawell.ui.component.defaults.defaultButtonColors
 import com.example.mostrawell.ui.navigation.Route
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -163,12 +164,7 @@ fun RegisterScreen(
                             }
                         }
                     },
-                    colors = ButtonColors(
-                        containerColor = colorResource(R.color.main_color),
-                        contentColor = colorResource(R.color.black),
-                        disabledContentColor = colorResource(R.color.black),
-                        disabledContainerColor = colorResource(R.color.main_color).copy(alpha = 0.7f)
-                    ),
+                    colors = defaultButtonColors(),
                     enabled = model.isDoneButtonEnabled(),
                     modifier = Modifier
                         .wrapContentWidth()
@@ -202,12 +198,7 @@ fun RegisterScreen(
                 )
                 OutlinedButton(
                     onClick = { navController.navigate(Route.SignInScreen.route) },
-                    colors = ButtonColors(
-                        containerColor = Color(0, 0, 0, 0),
-                        contentColor = colorResource(R.color.black),
-                        disabledContentColor = colorResource(R.color.black),
-                        disabledContainerColor = Color(0, 0, 0, 0)
-                    ),
+                    colors = defaultButtonColors(),
                     modifier = Modifier
                         .wrapContentSize()
                 ) {

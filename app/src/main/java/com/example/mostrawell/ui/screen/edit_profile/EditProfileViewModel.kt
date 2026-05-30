@@ -41,10 +41,8 @@ class EditProfileViewModel(private val profileManager: ProfileManager, private v
     fun onDoneButtonClick() {
         val userId = user.value?.id ?: return
         viewModelScope.launch {
-            if (_name.value.isNotBlank()) {
-                profileManager.updateName(_name.value)
-                userRepository.changeName(userId, _name.value)
-            }
+            profileManager.updateName(_name.value)
+            userRepository.changeName(userId, _name.value)
         }
     }
 }

@@ -14,7 +14,7 @@ enum class LocationTag: Tag {
 
     override val originalName: String = name
 
-    override fun getName(): String {
+    override fun getFormattedName(): String {
         return name
             .replace("_", " ")
             .lowercase()

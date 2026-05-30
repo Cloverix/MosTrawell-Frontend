@@ -1,6 +1,5 @@
 package com.example.mostrawell.ui.screen.landmark_details
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,7 +14,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -85,7 +83,7 @@ fun LandmarkDetailsScreen(
                             selected = false,
                             onClick = {},
                             enabled = true,
-                            label = { Text(text = tag.getName()) }
+                            label = { Text(text = tag.getFormattedName()) }
                         )
                     }
                 }
@@ -107,7 +105,9 @@ fun LandmarkDetailsScreen(
             is OperationResult.Loading -> CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         }
         SmallFloatingActionButton(
-            onClick = { navController.navigate(Route.RecommendationFeedScreen.route) },
+            onClick = {
+                if (!navController.popBackStack()) navController.navigate(Route.RecommendationFeedScreen.route)
+            },
             containerColor = colorResource(R.color.main_color),
             contentColor = Color.White,
             modifier = Modifier

@@ -53,7 +53,7 @@ class InterestSelectionViewModel(
         viewModelScope.launch {
             _uiState.value = OperationResult.Loading
             profileManager.updateTags(_selectedTags.value)
-            val resource = userRepository.changeTags(userId, _selectedTags.value.map { it.getName() }.toSet())
+            val resource = userRepository.changeTags(userId, _selectedTags.value.map { it.originalName }.toSet())
             if (resource is Resource.Success) {
                 //authState.setLoggedInState(true)
                 _uiState.value = OperationResult.Success

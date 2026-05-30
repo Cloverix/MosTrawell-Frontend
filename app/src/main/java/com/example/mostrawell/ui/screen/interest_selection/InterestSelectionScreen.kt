@@ -1,6 +1,5 @@
 package com.example.mostrawell.ui.screen.interest_selection
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
@@ -37,7 +36,8 @@ import com.example.mostrawell.domain.entity.tag.EntertainmentTag
 import com.example.mostrawell.domain.entity.tag.LocationTag
 import com.example.mostrawell.domain.util.AuthState
 import com.example.mostrawell.domain.util.OperationResult
-import com.example.mostrawell.ui.component.SimpleScaffold
+import com.example.mostrawell.ui.component.composable.SimpleScaffold
+import com.example.mostrawell.ui.component.defaults.defaultButtonColors
 import com.example.mostrawell.ui.navigation.Route
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
@@ -144,7 +144,7 @@ fun InterestSelectionScreen(
                             },
                             label = {
                                 Text(
-                                    text = tag.getName()
+                                    text = tag.getFormattedName()
                                         .replace("_", " ")
                                         .lowercase()
                                         .replaceFirstChar { it.uppercase() }
@@ -166,7 +166,7 @@ fun InterestSelectionScreen(
                         when (uiState) {
                             is OperationResult.Success -> {
                                 if (toNavigate) {
-                                    navController.navigate(Route.ProfileScreen.route)
+                                    if (!navController.popBackStack()) navController.navigate(Route.ProfileScreen.route)
                                 }
                                 else {
                                     authState.setLoggedInState(true)
@@ -176,12 +176,7 @@ fun InterestSelectionScreen(
                         }
                     },
                     enabled = selectedTags.isNotEmpty() && uiState is OperationResult.Success,
-                    colors = ButtonColors(
-                        containerColor = colorResource(R.color.main_color),
-                        contentColor = colorResource(R.color.white),
-                        disabledContainerColor = Color(0, 0, 0, 0),
-                        disabledContentColor = colorResource(R.color.black)
-                    ),
+                    colors = defaultButtonColors(),
                     modifier = Modifier
                         .wrapContentSize()
                         .align(Alignment.CenterHorizontally)

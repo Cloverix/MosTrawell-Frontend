@@ -1,36 +1,59 @@
-package com.example.mostrawell.ui.component
+package com.example.mostrawell.ui.component.composable
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemColors
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.example.mostrawell.R
-import com.example.mostrawell.domain.util.NavigationDirection
-import com.example.mostrawell.ui.navigation.Route
+import com.example.mostrawell.ui.navigation.page.ProfilePage
+import com.example.mostrawell.ui.navigation.page.RecommendationFeedPage
+import com.example.mostrawell.ui.navigation.page.SettingsPage
 
 @Composable
-fun MainScaffold(
-    navController: NavHostController,
-    content: @Composable (PaddingValues) -> Unit
-) {
+fun MainScaffold() {
+    val pagerState = rememberPagerState(initialPage = 0) { 3 }
+
+    Scaffold(
+        topBar = {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(40.dp)
+                    .background(
+                        colorResource(R.color.main_color_lowered_contrast)
+                    )
+            )
+        },
+        bottomBar = {
+            MainNavigationBar(pagerState)
+        }
+    ) { innerPadding ->
+        HorizontalPager(
+            state = pagerState,
+            userScrollEnabled = false,
+            modifier = Modifier
+                .padding(innerPadding)
+        ) { page ->
+            Box(modifier = Modifier.fillMaxSize()) {
+                when (page) {
+                    0 -> RecommendationFeedPage()
+                    1 -> ProfilePage()
+                    2 -> SettingsPage()
+                }
+            }
+        }
+    }
+
+    /*
     var selectedScreen by rememberSaveable { mutableIntStateOf(0) }
     val navigationBarItemColors = NavigationBarItemColors(
         selectedIndicatorColor = colorResource(R.color.main_color_lowered_contrast),
@@ -116,4 +139,6 @@ fun MainScaffold(
     ) { innerPadding ->
         content(innerPadding)
     }
+
+     */
 }

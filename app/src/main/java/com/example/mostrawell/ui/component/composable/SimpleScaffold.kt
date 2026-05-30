@@ -1,4 +1,4 @@
-package com.example.mostrawell.ui.component
+package com.example.mostrawell.ui.component.composable
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

@@ -1,36 +1,45 @@
 package com.example.mostrawell.ui.navigation
 
-import android.util.Log
-import androidx.compose.animation.core.Transition
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.mostrawell.domain.util.AuthState
-import com.example.mostrawell.ui.component.MainScaffold
-import com.example.mostrawell.ui.screen.edit_profile.EditProfileScreen
+import com.example.mostrawell.ui.component.composable.MainScaffold
 import com.example.mostrawell.ui.screen.interest_selection.InterestSelectionScreen
-import com.example.mostrawell.ui.screen.landmark_details.LandmarkDetailsScreen
-import com.example.mostrawell.ui.screen.profile.ProfileScreen
-import com.example.mostrawell.ui.screen.recommendation_feed.RecommendationFeedScreen
 import com.example.mostrawell.ui.screen.register.RegisterScreen
-import com.example.mostrawell.ui.screen.settings.SettingsScreen
 import com.example.mostrawell.ui.screen.sign_in.SignInScreen
 import org.koin.compose.koinInject
 
 @Composable
 fun Root(
-    authState: AuthState = koinInject(),
-    navController: NavHostController = rememberNavController()
+    authState: AuthState = koinInject()
 ) {
     val isUserLoggedIn by authState.isUserLoggedIn.collectAsStateWithLifecycle()
 
+    if (isUserLoggedIn) {
+        MainScaffold()
+    }
+    else {
+        val authNavController = rememberNavController()
+        NavHost(
+            authNavController,
+            startDestination = Route.SignInScreen.route
+        ) {
+            composable(Route.SignInScreen.route) {
+                SignInScreen(authNavController)
+            }
+            composable(Route.RegisterScreen.route) {
+                RegisterScreen(authNavController)
+            }
+            composable(Route.InterestSelection.route) {
+                InterestSelectionScreen(authNavController)
+            }
+        }
+    }
+    /*
     if (isUserLoggedIn) {
         MainScaffold(navController) { innerPadding ->
             NavHost(
@@ -96,4 +105,5 @@ fun Root(
             }
         }
     }
+    */
 }
