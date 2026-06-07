@@ -13,7 +13,10 @@ import com.example.mostrawell.ui.model.UserUiModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class RegisterViewModel(private val profileManager: ProfileManager, private val userRepository: UserRepository): ViewModel() {
+class RegisterViewModel(
+    private val profileManager: ProfileManager,
+    private val userRepository: UserRepository
+): ViewModel() {
     var nickname by mutableStateOf("")
         private set
     var age by mutableStateOf("")
@@ -25,6 +28,12 @@ class RegisterViewModel(private val profileManager: ProfileManager, private val 
         private set
     var duplicatePassword by mutableStateOf("")
         private set
+
+    private var _unmaskPasswordField = MutableStateFlow(false)
+    val unmaskPasswordField: StateFlow<Boolean> = _unmaskPasswordField
+
+    private var _unmaskDuplicatePasswordField = MutableStateFlow(false)
+    val unmaskDuplicatePasswordField: StateFlow<Boolean> = _unmaskDuplicatePasswordField
 
     private val _uiState = MutableStateFlow<OperationResult>(OperationResult.Success)
     val uiState: StateFlow<OperationResult> = _uiState
@@ -89,5 +98,13 @@ class RegisterViewModel(private val profileManager: ProfileManager, private val 
 
     fun isDoneButtonEnabled(): Boolean {
         return nickname.isNotBlank() && login.isNotBlank() && validatePassword()
+    }
+
+    fun onUnmaskPasswordField() {
+        _unmaskPasswordField.value = !_unmaskPasswordField.value
+    }
+
+    fun onUnmaskDuplicatePasswordField() {
+        _unmaskDuplicatePasswordField.value = !_unmaskDuplicatePasswordField.value
     }
 }

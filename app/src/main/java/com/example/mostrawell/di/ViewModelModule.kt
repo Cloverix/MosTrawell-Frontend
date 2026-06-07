@@ -17,11 +17,16 @@
         viewModel { params ->
             LandmarkDetailsViewModel(
                 landmarkId = params.get(),
-                landmarkRepository = get()
+                userRepository = get(),
+                landmarkRepository = get(),
+                profileManager = get()
             )
         }
         viewModel { ProfileViewModel(get()) }
-        viewModel { RecommendationFeedViewModel(get(), get()) }
+        viewModel { RecommendationFeedViewModel(
+            userRepository = get(),
+            landmarkRepository = get(),
+            profileManager = get()) }
         viewModel { RegisterViewModel(get(), get()) }
         viewModel { SettingsViewModel(get(), get(), get()) }
         viewModel { SignInViewModel(get(), get()) }

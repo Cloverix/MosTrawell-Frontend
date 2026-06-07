@@ -14,10 +14,12 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults.InputField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,7 +46,15 @@ fun RecommendationFeedScreen(
 ) {
     val query by model.query.collectAsStateWithLifecycle()
     val foundLandmarks by model.foundLandmarks.collectAsStateWithLifecycle()
+    val favouriteFilterEnabled by model.favouriteFilterEnabled.collectAsStateWithLifecycle()
     val uiState by model.uiState.collectAsStateWithLifecycle()
+
+    val currentBackstackEntry = navController.currentBackStackEntry
+    LaunchedEffect(currentBackstackEntry) {
+        if (currentBackstackEntry?.destination?.route == Route.RecommendationFeedScreen.route && favouriteFilterEnabled) {
+            model.refreshFavourites()
+        }
+    }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -59,6 +69,21 @@ fun RecommendationFeedScreen(
                     onSearch = { model.onSearchImmediate(it)},
                     expanded = false,
                     onExpandedChange = {},
+                    leadingIcon = {
+                        val iconPainter = if (favouriteFilterEnabled) painterResource(R.drawable.heart_filled_icon) else painterResource(R.drawable.heart_icon)
+                        val iconTint = if (favouriteFilterEnabled) Color.Red else LocalContentColor.current
+                        IconButton(
+                            onClick = { model.onToggleFavouriteFilter() }
+                        ) {
+                            Icon(
+                                painter = iconPainter,
+                                contentDescription = "heart icon",
+                                tint = iconTint,
+                                modifier = Modifier
+                                    .scale(0.9f)
+                            )
+                        }
+                    },
                     trailingIcon = {
                         if (query.isEmpty()) {
                             Icon(
@@ -104,8 +129,8 @@ fun RecommendationFeedScreen(
                     ) {
                         items(foundLandmarks) { landmark ->
                             LandmarkCard(
-                                landmark,
-                                Modifier.clickable {
+                                landmark = landmark,
+                                modifier = Modifier.clickable {
                                     navController.navigate(
                                         Route.LandmarkDetailsScreen.landmarkDetails(
                                             landmark.id

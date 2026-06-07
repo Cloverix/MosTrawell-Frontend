@@ -18,7 +18,8 @@ object UserMapper {
                 val tag: Tag? = findTagByName(tagName)
                 tag?:throw IllegalArgumentException("Tag does not exist")
                 tag
-            }.toSet()
+            }.toSet(),
+            favouriteLandmarksId = dto.favouriteLandmarksId
         )
     }
 
@@ -29,7 +30,8 @@ object UserMapper {
             name = uiModel.name,
             age = uiModel.age.toInt(),
             avatarUrl = uiModel.avatarUrl,
-            tags = uiModel.tags.map { it.toString() }.toSet()
+            tags = uiModel.tags.map { it.toString() }.toSet(),
+            favouriteLandmarksId = uiModel.favouriteLandmarksId
         )
     }
 }

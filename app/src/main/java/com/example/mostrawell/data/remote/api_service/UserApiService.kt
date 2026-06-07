@@ -1,9 +1,11 @@
 package com.example.mostrawell.data.remote.api_service
 
 import com.example.mostrawell.data.remote.AuthManager
+import com.example.mostrawell.data.remote.dto.LandmarkDto
 import com.example.mostrawell.data.remote.dto.UserDto
 import com.example.mostrawell.data.remote.dto.UserRegisterDto
 import com.example.mostrawell.domain.util.Resource
+import com.example.mostrawell.ui.model.UserUiModel
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.basicAuth
@@ -18,6 +20,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
 import io.ktor.http.isSuccess
+import io.ktor.http.parametersOf
 import io.ktor.util.encodeBase64
 import io.ktor.utils.io.CancellationException
 import okhttp3.Response
@@ -92,6 +95,28 @@ class UserApiService(
         }
     }
 
+    suspend fun getFavourites(id: Long): Resource<List<LandmarkDto>> {
+        return try {
+            val credentials = authManager.getCredentials() ?: return Resource.Failure("User not authenticated")
+            val response = client.get("api/users/favourites") {
+                parameter("id", id)
+                basicAuth(credentials.first, credentials.second)
+            }
+            if (response.status.isSuccess()) {
+                Resource.Success(response.body())
+            }
+            else {
+                Resource.Failure("Error ${response.status.value}: ${response.body<String>()}")
+            }
+        }
+        catch (e: CancellationException) {
+            throw e
+        }
+        catch (e: Exception) {
+            Resource.Failure("Unexpected error: ${e.message}")
+        }
+    }
+
     suspend fun register(dto: UserRegisterDto): Resource<UserDto> {
         return try {
             val response = client.post("api/users/register") {
@@ -149,6 +174,60 @@ class UserApiService(
                 parameter("id", id)
                 contentType(ContentType.Application.Json)
                 setBody(tags)
+                basicAuth(credentials.first, credentials.second)
+            }
+            if (response.status.isSuccess()) {
+                Resource.Success(response.body())
+            }
+            else {
+                Resource.Failure("Error ${response.status.value}: ${response.body<String>()}")
+            }
+        }
+        catch (e: CancellationException) {
+            throw e
+        }
+        catch (e: Exception) {
+            Resource.Failure("Unexpected error: ${e.message}")
+        }
+    }
+
+    suspend fun addFavouriteLandmark(
+        id: Long,
+        landmarkId: Long
+    ): Resource<UserDto> {
+        return try {
+            val credentials = authManager.getCredentials() ?: return Resource.Failure("User not authenticated")
+            val response = client.patch("api/users/addFavourite") {
+                parameter("id", id)
+                parameter("landmarkId", landmarkId)
+                contentType(ContentType.Application.Json)
+                basicAuth(credentials.first, credentials.second)
+            }
+            if (response.status.isSuccess()) {
+                Resource.Success(response.body())
+            }
+            else {
+                Resource.Failure("Error ${response.status.value}: ${response.body<String>()}")
+            }
+        }
+        catch (e: CancellationException) {
+            throw e
+        }
+        catch (e: Exception) {
+            Resource.Failure("Unexpected error: ${e.message}")
+        }
+    }
+
+    suspend fun removeFavouriteLandmark(
+        id: Long,
+        landmarkId: Long
+    ): Resource<UserDto> {
+        return try {
+            val credentials = authManager.getCredentials() ?: return Resource.Failure("User not authenticated")
+            val response = client.patch("api/users/removeFavourite") {
+                parameter("id", id)
+                parameter("landmarkId", landmarkId)
+                contentType(ContentType.Application.Json)
                 basicAuth(credentials.first, credentials.second)
             }
             if (response.status.isSuccess()) {

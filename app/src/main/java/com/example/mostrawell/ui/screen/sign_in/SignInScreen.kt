@@ -14,11 +14,14 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,9 +33,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -41,6 +46,7 @@ import com.example.mostrawell.R
 import com.example.mostrawell.domain.util.AuthState
 import com.example.mostrawell.domain.util.OperationResult
 import com.example.mostrawell.ui.component.composable.GradientMainScreen
+import com.example.mostrawell.ui.component.defaults.defaultButtonColors
 import com.example.mostrawell.ui.navigation.Route
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -55,66 +61,79 @@ fun SignInScreen(
     ) {
     val context = LocalContext.current
 
-    GradientMainScreen(
-        gradientColor1 = colorResource(R.color.main_color),
-        gradientColor2 = colorResource(R.color.white)
+    val unmaskPasswordField by model.unmaskPasswordField.collectAsStateWithLifecycle()
+    val uiState by model.uiState.collectAsStateWithLifecycle()
+
+    Box(
+        modifier = modifier
+            .fillMaxSize()
     ) {
-        Box(
-            modifier = modifier
-                .fillMaxSize()
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .align(Alignment.Center)
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
+            Text(
+                text = stringResource(R.string.app_name),
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Bold,
                 modifier = Modifier
-                    .align(Alignment.Center)
-            ) {
-                Text(
-                    text = stringResource(R.string.app_name),
-                    fontSize = 32.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                )
-                Spacer(Modifier.height(40.dp))
-                OutlinedTextField(
-                    value = model.login,
-                    onValueChange = { newLogin -> model.onLoginChange(newLogin) },
-                    label = { Text(text = "Login") },
-                    modifier = Modifier
-                )
-                OutlinedTextField(
-                    value = model.password,
-                    onValueChange = { newPassword -> model.onPasswordChange(newPassword) },
-                    visualTransformation = PasswordVisualTransformation(),
-                    label = { Text(text = "Password") },
-                    modifier = Modifier
-                )
-                Button(
-                    onClick = {
-                        model.viewModelScope.launch {
-                            when (val validationResult = model.onDoneButtonClick()) {
-                                is OperationResult.Success -> {
-                                    authState.setLoggedInState(true)
-                                }
-                                is OperationResult.Failure -> Toast.makeText(context, validationResult.message,
-                                    Toast.LENGTH_SHORT).show()
-                                else -> {}
+            )
+            Spacer(Modifier.height(40.dp))
+            OutlinedTextField(
+                value = model.login,
+                onValueChange = { newLogin -> model.onLoginChange(newLogin) },
+                label = { Text(text = "Login") },
+                modifier = Modifier
+            )
+            OutlinedTextField(
+                value = model.password,
+                onValueChange = { newPassword -> model.onPasswordChange(newPassword) },
+                visualTransformation = if (!unmaskPasswordField) PasswordVisualTransformation() else VisualTransformation.None,
+                trailingIcon = {
+                    IconButton(
+                        onClick = { model.onUnmaskPasswordField() }
+                    ) {
+                        val iconPainter =
+                            if (unmaskPasswordField) painterResource(R.drawable.eye_icon)
+                            else painterResource(R.drawable.eye_slash_icon)
+                        Icon(
+                            painter = iconPainter,
+                            contentDescription = "eye icon"
+                        )
+                    }
+                },
+                label = { Text(text = "Password") },
+                modifier = Modifier
+            )
+            Button(
+                onClick = {
+                    model.viewModelScope.launch {
+                        when (val validationResult = model.onDoneButtonClick()) {
+                            is OperationResult.Success -> {
+                                authState.setLoggedInState(true)
                             }
+                            is OperationResult.Failure -> Toast.makeText(context, validationResult.message,
+                                Toast.LENGTH_SHORT).show()
+                            else -> {}
                         }
-                    },
-                    colors = ButtonColors(
-                        containerColor = colorResource(R.color.main_color),
-                        contentColor = colorResource(R.color.black),
-                        disabledContentColor = colorResource(R.color.black),
-                        disabledContainerColor = colorResource(R.color.main_color).copy(alpha = 0.7f)
-                    ),
-                    enabled = model.isDoneButtonEnabled(),
-                    modifier = Modifier
-                        .wrapContentWidth()
-                        .clip(CircleShape)
-                        .padding(vertical = 20.dp)
-                ) {
-                    Row(
+                    }
+                },
+                colors = defaultButtonColors(),
+                enabled = model.isDoneButtonEnabled(),
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .clip(CircleShape)
+                    .padding(vertical = 20.dp)
+            ) {
+                when (uiState) {
+                    is OperationResult.Loading -> CircularProgressIndicator(
+                        color = Color.White,
+                        modifier = Modifier
+                            .scale(0.75f)
+                    )
+                    else -> Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
                     ) {
@@ -130,27 +149,27 @@ fun SignInScreen(
                         )
                     }
                 }
+            }
+            Text(
+                text = "Don't have an account?",
+                fontSize = 12.sp,
+                fontWeight = FontWeight.SemiBold
+            )
+            OutlinedButton(
+                onClick = { navController.navigate(Route.RegisterScreen.route) },
+                colors = ButtonColors(
+                    containerColor = Color(0, 0, 0, 0),
+                    contentColor = colorResource(R.color.black),
+                    disabledContentColor = colorResource(R.color.black),
+                    disabledContainerColor = Color(0, 0, 0, 0)
+                ),
+                modifier = Modifier
+                    .wrapContentSize()
+            ) {
                 Text(
-                    text = "Don't have an account?",
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.SemiBold
+                    text = "Sign up",
+                    fontSize = 16.sp
                 )
-                OutlinedButton(
-                    onClick = { navController.navigate(Route.RegisterScreen.route) },
-                    colors = ButtonColors(
-                        containerColor = Color(0, 0, 0, 0),
-                        contentColor = colorResource(R.color.black),
-                        disabledContentColor = colorResource(R.color.black),
-                        disabledContainerColor = Color(0, 0, 0, 0)
-                    ),
-                    modifier = Modifier
-                        .wrapContentSize()
-                ) {
-                    Text(
-                        text = "Sign up",
-                        fontSize = 16.sp
-                    )
-                }
             }
         }
     }

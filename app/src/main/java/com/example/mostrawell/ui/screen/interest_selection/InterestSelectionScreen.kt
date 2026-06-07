@@ -52,143 +52,140 @@ fun InterestSelectionScreen(
     val uiState by model.uiState.collectAsStateWithLifecycle()
     val selectedTags by model.selectedTags.collectAsStateWithLifecycle()
 
-    SimpleScaffold { paddingValues ->
-        when(uiState) {
-            is OperationResult.Failure -> Text(
-                text = (uiState as OperationResult.Failure).message,
+    when(uiState) {
+        is OperationResult.Failure -> Text(
+            text = (uiState as OperationResult.Failure).message,
+            fontSize = 24.sp,
+            color = Color.Red,
+            modifier = Modifier
+                .padding(vertical = 40.dp)
+        )
+        else -> Column(
+            modifier = modifier
+                .padding(horizontal = 5.dp)
+                .fillMaxHeight()
+                .verticalScroll(rememberScrollState())
+        ) {
+            Text(
+                text = "Choose some interests that describe you!",
                 fontSize = 24.sp,
-                color = Color.Red,
-                modifier = Modifier
-                    .padding(vertical = 40.dp)
+                fontWeight = FontWeight.Bold
             )
-            else -> Column(
-                modifier = modifier
-                    .padding(paddingValues)
-                    .padding(horizontal = 5.dp)
-                    .fillMaxHeight()
-                    .verticalScroll(rememberScrollState())
+            HorizontalDivider(
+                thickness = 2.dp,
+                color = colorResource(R.color.grey),
+                modifier = Modifier
+                    .padding(5.dp)
+                    .scale(0.95f)
+                    .align(Alignment.CenterHorizontally)
+            )
+            Text(
+                text = "Entertainment",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.SemiBold
+            )
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
             ) {
-                Text(
-                    text = "Choose some interests that describe you!",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                HorizontalDivider(
-                    thickness = 2.dp,
-                    color = colorResource(R.color.grey),
-                    modifier = Modifier
-                        .padding(5.dp)
-                        .scale(0.95f)
-                        .align(Alignment.CenterHorizontally)
-                )
-                Text(
-                    text = "Entertainment",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.SemiBold
-                )
-                FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                ) {
-                    EntertainmentTag.entries.forEach { tag ->
-                        FilterChip(
-                            selected = tag in selectedTags,
-                            onClick = {
-                                if (tag in selectedTags) model.removeSelectedTag(tag)
-                                else model.addSelectedTag(tag)
-                            },
-                            label = {
-                                Text(
-                                    text = tag.name
-                                        .replace("_", " ")
-                                        .lowercase()
-                                        .replaceFirstChar { it.uppercase() }
-                                )
-                            },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = colorResource(R.color.main_color),
-                                selectedLabelColor = colorResource(R.color.white),
-                                containerColor = colorResource(R.color.white),
-                                labelColor = colorResource(R.color.black)
+                EntertainmentTag.entries.forEach { tag ->
+                    FilterChip(
+                        selected = tag in selectedTags,
+                        onClick = {
+                            if (tag in selectedTags) model.removeSelectedTag(tag)
+                            else model.addSelectedTag(tag)
+                        },
+                        label = {
+                            Text(
+                                text = tag.name
+                                    .replace("_", " ")
+                                    .lowercase()
+                                    .replaceFirstChar { it.uppercase() }
                             )
+                        },
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = colorResource(R.color.main_color),
+                            selectedLabelColor = colorResource(R.color.white),
+                            containerColor = colorResource(R.color.white),
+                            labelColor = colorResource(R.color.black)
                         )
-                    }
+                    )
                 }
-                HorizontalDivider(
-                    thickness = 2.dp,
-                    color = colorResource(R.color.grey),
-                    modifier = Modifier
-                        .padding(5.dp)
-                        .scale(0.95f)
-                        .align(Alignment.CenterHorizontally)
-                )
-                Text(
-                    text = "Location",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.SemiBold
-                )
-                FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                ) {
-                    LocationTag.entries.forEach { tag ->
-                        FilterChip(
-                            selected = tag in selectedTags,
-                            onClick = {
-                                if (tag in selectedTags) model.removeSelectedTag(tag)
-                                else model.addSelectedTag(tag)
-                            },
-                            label = {
-                                Text(
-                                    text = tag.getFormattedName()
-                                        .replace("_", " ")
-                                        .lowercase()
-                                        .replaceFirstChar { it.uppercase() }
-                                )
-                            },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = colorResource(R.color.main_color),
-                                selectedLabelColor = colorResource(R.color.white),
-                                containerColor = colorResource(R.color.white),
-                                labelColor = colorResource(R.color.black)
+            }
+            HorizontalDivider(
+                thickness = 2.dp,
+                color = colorResource(R.color.grey),
+                modifier = Modifier
+                    .padding(5.dp)
+                    .scale(0.95f)
+                    .align(Alignment.CenterHorizontally)
+            )
+            Text(
+                text = "Location",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.SemiBold
+            )
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+            ) {
+                LocationTag.entries.forEach { tag ->
+                    FilterChip(
+                        selected = tag in selectedTags,
+                        onClick = {
+                            if (tag in selectedTags) model.removeSelectedTag(tag)
+                            else model.addSelectedTag(tag)
+                        },
+                        label = {
+                            Text(
+                                text = tag.getFormattedName()
+                                    .replace("_", " ")
+                                    .lowercase()
+                                    .replaceFirstChar { it.uppercase() }
                             )
+                        },
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = colorResource(R.color.main_color),
+                            selectedLabelColor = colorResource(R.color.white),
+                            containerColor = colorResource(R.color.white),
+                            labelColor = colorResource(R.color.black)
                         )
-                    }
+                    )
                 }
-                OutlinedButton(
-                    onClick = {
-                        val toNavigate = authState.getLoggedInState()
-                        model.onDoneButtonClick()
-                        when (uiState) {
-                            is OperationResult.Success -> {
-                                if (toNavigate) {
-                                    if (!navController.popBackStack()) navController.navigate(Route.ProfileScreen.route)
-                                }
-                                else {
-                                    authState.setLoggedInState(true)
-                                }
-                            }
-                            else -> {}
-                        }
-                    },
-                    enabled = selectedTags.isNotEmpty() && uiState is OperationResult.Success,
-                    colors = defaultButtonColors(),
-                    modifier = Modifier
-                        .wrapContentSize()
-                        .align(Alignment.CenterHorizontally)
-                ) {
+            }
+            OutlinedButton(
+                onClick = {
+                    val toNavigate = authState.getLoggedInState()
+                    model.onDoneButtonClick()
                     when (uiState) {
-                        is OperationResult.Loading -> CircularProgressIndicator()
-                        else -> Text(
-                            text = "Done"
-                        )
+                        is OperationResult.Success -> {
+                            if (toNavigate) {
+                                if (!navController.popBackStack()) navController.navigate(Route.ProfileScreen.route)
+                            }
+                            else {
+                                authState.setLoggedInState(true)
+                            }
+                        }
+                        else -> {}
                     }
-
+                },
+                enabled = selectedTags.isNotEmpty() && uiState is OperationResult.Success,
+                colors = defaultButtonColors(),
+                modifier = Modifier
+                    .wrapContentSize()
+                    .align(Alignment.CenterHorizontally)
+            ) {
+                when (uiState) {
+                    is OperationResult.Loading -> CircularProgressIndicator()
+                    else -> Text(
+                        text = "Done"
+                    )
                 }
+
             }
         }
     }

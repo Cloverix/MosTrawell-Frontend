@@ -13,8 +13,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
-class ProfileManager(
-    private val context: Context) {
+class ProfileManager(private val context: Context) {
     companion object {
         val USER_ID = longPreferencesKey("user_id")
         val USER_LOGIN = stringPreferencesKey("user_login")
@@ -23,6 +22,7 @@ class ProfileManager(
         val USER_AGE = intPreferencesKey("user_age")
         val USER_AVATAR_URL = stringPreferencesKey("user_avatar_url")
         val USER_TAGS = stringSetPreferencesKey("user_tags")
+        val USER_FAVOURITES = stringSetPreferencesKey("user_favourites")
     }
 
     fun getProfileFlow(): Flow<UserUiModel?> {
@@ -33,7 +33,8 @@ class ProfileManager(
             val age = (preferences[USER_AGE] ?: return@map null).toString()
             val avatarUrl = preferences[USER_AVATAR_URL] ?: ""
             val tags = (preferences[USER_TAGS] ?: emptySet()).mapNotNull { findTagByName(it) }.toSet()
-            UserUiModel(id, login, name, age, avatarUrl, tags)
+            val userFavourites = (preferences[USER_FAVOURITES] ?: emptyList()).map { it.toLong() }.toList()
+            UserUiModel(id, login, name, age, avatarUrl, tags, userFavourites)
         }
     }
 
@@ -55,6 +56,12 @@ class ProfileManager(
         }.first()
     }
 
+    suspend fun getFavourites(): Set<Long>? {
+        return context.userDataStore.data.map { preferences ->
+            preferences[USER_FAVOURITES]?.map { it.toLong() }
+        }.first()?.toSet()
+    }
+
     suspend fun getProfile(): UserUiModel? {
         return getProfileFlow().first()
     }
@@ -74,6 +81,7 @@ class ProfileManager(
                 preferences[USER_AGE] = user.age.toInt()
                 preferences[USER_AVATAR_URL] = user.avatarUrl ?: ""
                 preferences[USER_TAGS] = user.tags.map { tag -> tag.originalName }.toSet()
+                preferences[USER_FAVOURITES] = user.favouriteLandmarksId.map { it.toString() }.toSet()
             }
         }
     }
@@ -87,6 +95,12 @@ class ProfileManager(
     suspend fun updateTags(tags: Set<Tag>) {
         context.userDataStore.edit { preferences ->
             preferences[USER_TAGS] = tags.map { tag -> tag.originalName }.toSet()
+        }
+    }
+
+    suspend fun updateFavourites(favouriteLandmarksId: List<Long>) {
+        context.userDataStore.edit { preferences ->
+            preferences[USER_FAVOURITES] = favouriteLandmarksId.map { it.toString() }.toSet()
         }
     }
 

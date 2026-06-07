@@ -229,6 +229,14 @@ fun SettingsScreen(
                 )
             }
         }
-        is OperationResult.Loading -> CircularProgressIndicator()
+        is OperationResult.Loading ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
     }
 }

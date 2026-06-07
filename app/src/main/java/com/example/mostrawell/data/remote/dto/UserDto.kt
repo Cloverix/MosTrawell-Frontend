@@ -9,5 +9,6 @@ data class UserDto(
     val name: String,
     val age: Int,
     val avatarUrl: String?,
-    val tags: Set<String>
+    val tags: Set<String>,
+    val favouriteLandmarksId: List<Long>
 )

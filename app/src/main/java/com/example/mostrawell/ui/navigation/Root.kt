@@ -1,13 +1,19 @@
 package com.example.mostrawell.ui.navigation
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.mostrawell.R
 import com.example.mostrawell.domain.util.AuthState
+import com.example.mostrawell.ui.component.composable.GradientMainScreen
 import com.example.mostrawell.ui.component.composable.MainScaffold
+import com.example.mostrawell.ui.component.composable.SimpleScaffold
 import com.example.mostrawell.ui.screen.interest_selection.InterestSelectionScreen
 import com.example.mostrawell.ui.screen.register.RegisterScreen
 import com.example.mostrawell.ui.screen.sign_in.SignInScreen
@@ -29,13 +35,28 @@ fun Root(
             startDestination = Route.SignInScreen.route
         ) {
             composable(Route.SignInScreen.route) {
-                SignInScreen(authNavController)
+                GradientMainScreen(
+                    gradientColor1 = colorResource(R.color.main_color),
+                    gradientColor2 = colorResource(R.color.white)
+                ) {
+                    SignInScreen(authNavController)
+                }
             }
             composable(Route.RegisterScreen.route) {
-                RegisterScreen(authNavController)
+                GradientMainScreen(
+                    gradientColor1 = colorResource(R.color.main_color),
+                    gradientColor2 = colorResource(R.color.white)
+                ) {
+                    RegisterScreen(authNavController)
+                }
             }
             composable(Route.InterestSelection.route) {
-                InterestSelectionScreen(authNavController)
+                SimpleScaffold { paddingValues ->
+                    InterestSelectionScreen(
+                        authNavController,
+                        modifier = Modifier.padding(paddingValues)
+                    )
+                }
             }
         }
     }

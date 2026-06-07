@@ -8,5 +8,11 @@ class UserUiModel (
     val name: String,
     val age: String,
     val avatarUrl: String?,
-    val tags: Set<Tag>
-)
+    val tags: Set<Tag>,
+    val favouriteLandmarksId: List<Long>
+) {
+    override fun equals(other: Any?): Boolean {
+        if (other !is UserUiModel) return false
+        return id == other.id
+    }
+}
